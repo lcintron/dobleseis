@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
+    <link rel="icon" href="img/favicon.png">
+    <link rel="shortcut icon" href="img/favicon.png">
+    <meta name="description" content="domino score keeping app">
+    <meta name="author" content="luis a cintron">
+    <title>doble seis</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/sticky-footer-navbar.css" rel="stylesheet">
+    <script type="text/javascript" src="phonegap.js"></script>
+</head>
+
+<body>
+    <div id="wrap">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" data-bind="visible:isInitialized()">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="#" class="navbar-brand" data-bind="click: this.app.tab_navigate" data-tab="home">
+                        <img src="img/logo.png" alt="DobleSeis" style="margin-top: -23px; margin-bottom: -10px;" data-tab="home" /></a>
+
+                    <h4 class="navbar-text text-center" style="color: white; display: block" data-bind="text: this.app.currentTab().title"></h4>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav" data-bind="foreach: this.app.tabs">
+                        <li>
+                            <button class="btn btn-link btn-block" style="color: white" data-bind="click: this.app.tab_navigate,text: title, visible: isVisible"></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <!-- Home -->
+            <div class="template hidden" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'">
+                <button class="btn btn-lg btn-primary btn-block" data-bind="click: newGame">Juego Nuevo <span class="glyphicon glyphicon-star"></span></button>
+                <button class="btn btn-lg btn-primary btn-block" data-bind="visible: isGameActive, click: this.app.tab_navigate" data-tab="activegame">Juego Activo <span class="glyphicon glyphicon-pencil"></span></button>
+                <button class="btn btn-lg btn-primary btn-block" data-bind="visible: games().length>0, click: this.app.tab_navigate" data-tab="history">Historial <span class="glyphicon glyphicon-calendar"></span></button>
+            </div>
+
+            <!-- Players -->
+            <div class="template hidden" id="players" data-bind="visible:this.app.currentTab().tabId == 'players'">
+                <h2>Jugadores</h2>
+                <div class="form-group">
+                    <label>Ellos</label>
+                    <input type="text" class="form-control input-lg" id="player1" placeholder="Jugador 1" style="margin-bottom: 10px;" data-bind="value: currentGame().player1">
+                    <input type="text" class="form-control input-lg" id="player2" placeholder="Jugador 2" data-bind="value:currentGame().player2">
+                </div>
+                <div class="form-group">
+                    <label>Nosotros</label>
+                    <input type="text" class="form-control input-lg" id="player3" placeholder="Jugador 3" style="margin-bottom: 10px;" data-bind="value:currentGame().player3">
+                    <input type="text" class="form-control input-lg" id="player4" placeholder="Jugador 4" data-bind="value: currentGame().player4">
+                </div>
+                <a href="#" class="btn btn-lg btn-primary btn-block" data-bind="click: startGame">Iniciar</a>
+            </div>
+
+            <!-- Active Game -->
+            <div class="template hidden" id="activegame" data-bind="visible:this.app.currentTab().tabId == 'activegame'">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th colspan="2"><span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">Ellos (<span
+                                data-bind="text:currentGame().totalEllos()"></span>)</span></th>
+                            <th colspan="2"><span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">Nosotros(<span
+                                data-bind="text:currentGame().totalNosotros()"></span>)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: currentGame().hands">
+                        <tr>
+                            <td style="text-align: center">
+                                <h3 data-bind="text: ellos().old_score"></h3>
+                            </td>
+                            <td style="text-align: center; border-right: 1px solid silver">
+                                <h3 data-bind="text: ellos().hand_score"></h3>
+                            </td>
+                            <td style="text-align: center">
+                                <h3 data-bind="text: nosotros().old_score"></h3>
+                            </td>
+                            <td style="text-align: center">
+                                <h3 data-bind="text: nosotros().hand_score"></h3>
+                            </td>
+                        </tr>
+                        <tr data-bind="visible:id == $root.currentGame().hands().length">
+                            <td style="text-align: center">
+                                <h3 data-bind="text: $root.currentGame().totalEllos()"></h3>
+                            </td>
+                            <td style="border-right: 1px solid silver">&nbsp;</td>
+                            <td style="text-align: center">
+                                <h3 data-bind="text: $root.currentGame().totalNosotros()"></h3>
+                            </td>
+                            <td style="text-align: center">&nbsp;</td>
+                            <td style="">&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-xs-6 col-sm-3">
+                        <button class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#handfinished" data-bind="enable: currentGame().totalEllos()<200 && currentGame().totalNosotros() <200">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div>
+                    <div class="col-xs-6 col-sm-3">
+                        <button class="btn btn-danger btn-lg btn-block" data-bind="click:removeHand, visible:currentGame().hands().length>0">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Summary -->
+            <div class="template hidden" id="gamesummary" data-bind="visible:this.app.currentTab().tabId == 'gamesummary', with: finishedGame()">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th colspan="2"><span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">Ellos (<span
+                                data-bind="text: totalEllos"></span>)</span></th>
+                            <th colspan="2"><span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">Nosotros(<span
+                                data-bind="text: totalNosotros"></span>)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: hands">
+                        <tr>
+                            <td style="text-align: center">
+                                <h3 data-bind="text: ellos.old_score"></h3>
+                            </td>
+                            <td style="text-align: center; border-right: 1px solid silver">
+                                <h3 data-bind="text: ellos.hand_score"></h3>
+                            </td>
+                            <td style="text-align: center">
+                                <h3 data-bind="text: nosotros.old_score"></h3>
+                            </td>
+                            <td style="text-align: center">
+                                <h3 data-bind="text: nosotros.hand_score"></h3>
+                            </td>
+                        </tr>
+                        <!--<tr data-bind="visible: id == $root.hands().length">
+                            <td style="text-align: center">
+                                <h3 data-bind="text: $root.totalEllos"></h3>
+                            </td>
+                            <td style="border-right: 1px solid silver">&nbsp;</td>
+                            <td style="text-align: center">
+                                <h3 data-bind="text: $root.totalNosotros"></h3>
+                            </td>
+                            <td style="text-align: center">&nbsp;</td>
+                            <td style="">&nbsp;</td>
+                        </tr>-->
+                    </tbody>
+                </table>
+                <button class="btn btn-primary btn-lg btn-block" data-bind="click:this.app.viewModel.newGame"><span class="glyphicon glyphicon-star"></span></button>
+                <button class="btn btn-danger btn-lg btn-block" data-bind="click:this.app.viewModel.deleteGame"><span class="glyphicon glyphicon-remove"></span></button>
+            </div>
+
+            <!-- History -->
+            <div class="template hidden" id="history" data-bind="visible:this.app.currentTab().tabId == 'history'">
+                <h3>Juegos</h3>
+                <div class="list-group" data-bind="foreach:games">
+                    <a href="#" class="list-group-item" data-bind="click: $root.viewGameSummary">
+                        <h4 class="list-group-item-heading">Ellos(<span data-bind="text:totalEllos"></span>) - Nosotros(<span data-bind="text:totalNosotros"></span>)
+                        </h4>
+                        <div class="gamebadge" style="float: right; margin-top: -30px; margin-right: -10px; font-size: 1.6em;">
+                            <span style="color: green;" class="glyphicon glyphicon-thumbs-up" data-bind="visible: won"></span>
+                            <span style="color: red;" class="glyphicon glyphicon-thumbs-down" data-bind="visible:!won"></span>
+                        </div>
+                        <p class="list-group-item-text" data-bind="text:displayText"></p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="template hidden" id="settings" data-bind="visible:this.app.currentTab().tabId == 'settings'">
+                <div data-bind="visible:!isInitialized()">
+                    <h3 class="text-center">Bienvenido!</h3>
+                    <h4 data-bind="" class="text-center">Por favor llene la siguiente forma para continuar.
+                            <br />
+                    </h4>
+                </div>
+                <h3>Profile</h3>
+                <form data-bind="submit:saveProfile" role="form" id="profileform">
+                    <div class="form-group">
+                        <input type="text" class="form-control input-lg" id="name" placeholder="*Full Name" data-bind="value:user.name" required />
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control input-lg" id="email" placeholder="*Email" data-bind="value:user.email" required />
+                    </div>
+                    <div class="form-group">
+                        <input type="number" min="0" max="200" class="form-control input-lg" id="phone" placeholder="*Phone" data-bind="value:user.phone" required />
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-block btn-success">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Hand Finished Modal-->
+    <div class="modal fade" id="handfinished" tabindex="-1" role="dialog" aria-labelledby="handfinished" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Puntos en Mano</h4>
+                </div>
+                <div class="modal-body" style="padding: 5px 5px">
+                    <div class="form">
+                        <form role="form">
+                            <label for="exampleInputEmail1">Ganador</label>
+                            <br />
+                            <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
+                                <label class="btn btn-primary btn-md">
+                                    <input type="radio" name="team" id="option1" value="Ellos">Ellos
+                                </label>
+                                <label class="btn btn-primary btn-md">
+                                    <input type="radio" name="team" id="option2" value="Nosotros">Nosotros
+                                </label>
+                            </div>
+                            <input type="number" aria-valuemin="0" aria-valuemax="200" min="0" max="200" required="required" class="form-control input-lg" id="puntos" placeholder="Puntos">
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-bottom: 0px">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" data-bind="click:addHand">Añadir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type='text/javascript' src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+    <script type='text/javascript' src="js/bootstrap.min.js"></script>
+    <script type='text/javascript' src="js/knockout-3.0.0.js"></script>
+    <script type='text/javascript' src="js/dobleseis.js"></script>
+</body>
+</html>

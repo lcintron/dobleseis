@@ -1,0 +1,24 @@
+HTML {
+	HEIGHT: 100%
+}
+BODY {
+	HEIGHT: 100%
+}
+#wrap {
+	PADDING-BOTTOM: 60px; MARGIN: 0px auto -60px; MIN-HEIGHT: 100%; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; HEIGHT: auto !important; PADDING-TOP: 0px
+}
+#footer {
+	BACKGROUND-COLOR: #f5f5f5; HEIGHT: 60px
+}
+#wrap > .container {
+	PADDING-BOTTOM: 0px; PADDING-LEFT: 15px; PADDING-RIGHT: 15px; PADDING-TOP: 60px
+}
+.container .credit {
+	MARGIN: 20px 0px
+}
+#footer > .container {
+	PADDING-LEFT: 15px; PADDING-RIGHT: 15px
+}
+CODE {
+	FONT-SIZE: 80%
+}
