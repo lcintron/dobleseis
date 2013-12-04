@@ -133,6 +133,11 @@
                     </tbody>
                 </table>
                 <div class="row">
+                    <!--<div class="col-xs-6 col-sm-3">
+                        <button class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#handfinished" data-bind="enable: currentGame().totalEllos()<200 && currentGame().totalNosotros() <200">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div> -->
                     <div class="col-xs-10 col-sm-10">
                         <button class="btn btn-danger btn-lg btn-block" data-bind="click:removeHand, visible:currentGame().hands().length>0">
                             <span class="glyphicon glyphicon-minus"></span>

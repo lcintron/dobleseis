@@ -278,7 +278,7 @@ var app = {
         app.isWebBased = _host.indexOf('localhost') >= 0 
         	     ||  _host.indexOf('azurewebsites.net') >= 0 
         	     ||  _host.indexOf('homecards.mm.com') >= 0
-        	     ||  _host =='';
+        	     ||  _host.indexOf('file')>=0;
         	     
         if (app.isWebBased) {
             app.onDeviceReady();
