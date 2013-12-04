@@ -1,4 +1,4 @@
-﻿
+﻿//Clases and logic 
 function User() {
     var self = this;
     self.userId = -1;
@@ -297,10 +297,11 @@ var app = {
     },
     pause: function () {
         app.receivedEvent('pause');
-        app.appIsOffline();
+        app.storage.set('current_tab', app.currentTab());
     },
     resume: function () {
         app.receivedEvent('resume');
+        app.currentTab(app.storage.get('current_tab'));
         app.onDeviceReady();
     },
     online: function () {
