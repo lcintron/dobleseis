@@ -28,27 +28,37 @@ function Game() {
     self.player3 = ko.observable('');
     self.player4 = ko.observable('');
     self.hands = ko.observableArray();
-    self.totalEllos = ko.computed(function () {
-        var count = self.hands().length;
-
-        if (count > 0)
-            return self.hands()[self.hands().length - 1].ellos().total();
-        else
-            return 0;
+    //ko computed
+    self.totalEllos = ko.computed({
+        read: function () {
+            var count = self.hands().length;
+            if (count > 0)
+                return self.hands()[self.hands().length - 1].ellos.total;
+            else
+                return 0;
+        },
+        write: function (value) { return; },
+        owner: this
     });
 
-    self.totalNosotros = ko.computed(function () {
-        var count = self.hands().length;
-        if (count > 0)
-            return self.hands()[self.hands().length - 1].nosotros().total();
-        else
-            return 0;
+    self.totalNosotros = ko.computed({
+        read: function () {
+            var count = self.hands().length;
+            if (count > 0)
+                return self.hands()[self.hands().length - 1].nosotros.total;
+            else
+                return 0;
+        },
+        write: function (value) { return; },
+        owner: this
     });
+
     self.isGameOver = ko.computed(function () {
         if (self.totalNosotros() >= self.gameLimit || self.totalEllos() >= self.gameLimit)
             return true;
         else { return false; }
     });
+
     self.won = ko.computed(function () {
         return self.isGameOver() && self.totalNosotros() >= self.gameLimit;
     });
@@ -60,31 +70,52 @@ function Game() {
     self.displayText = ko.computed(function () {
         return self.player1() + ', ' + self.player2() + ' vs ' + self.player3() + ', ' + self.player4();
     });
+
+    //functions
+    self.loadFromJS = function (_game) {
+        self.gameLimit = _game.gameLimit;
+        self.completedOn = _game.completedOn;
+        self.player1 = ko.observable(_game.player1);
+        self.player2 = ko.observable(_game.player2);
+        self.player3 = ko.observable(_game.player3);
+        self.player4 = ko.observable(_game.player4);
+        ko.utils.arrayPushAll(self.hands(), _game.hands);
+    };
+}
+
+function Hand() {
+    var self = this;
+    self.id = 0;
+    self.hand_score = 0;
+    self.winner = null;
+    self.ellos = null;
+    self.nosotros = null;
+    self.setHand = function (winner, hand_score) {
+        self.hand_score = hand_score;
+        self.winner = winner;
+        if (winner == "Ellos") {
+            self.ellos = new TeamScore(0, self.hand_score);
+            self.nosotros = new TeamScore(0, 0);
+        }
+        else if (winner == "Nosotros") {
+            self.ellos = new TeamScore(0, 0);
+            self.nosotros = new TeamScore(0, self.hand_score);
+        }
+    }
+    self.reload = function () {
+        self.ellos.reload();
+        self.nosotros.reload();
+    }
 }
 
 function TeamScore(old_score, hand_score) {
     var self = this;
     self.old_score = old_score;
     self.hand_score = hand_score;
-    self.total = function () {
-        return self.old_score + self.hand_score;
+    self.total = self.old_score + self.hand_score;
+    self.reload = function () {
+        self.total = self.old_score + self.hand_score;
     };
-}
-
-function Hand(winner, hand_score) {
-    var self = this;
-    self.id = 0;
-    self.winner = winner;
-    self.ellos = null;
-    self.nosotros = null;
-    if (winner == "Ellos") {
-        self.ellos = ko.observable(new TeamScore(0, hand_score));
-        self.nosotros = ko.observable(new TeamScore(0, 0));
-    }
-    else if (winner == "Nosotros") {
-        self.ellos = ko.observable(new TeamScore(0, 0));
-        self.nosotros = ko.observable(new TeamScore(0, hand_score));
-    }
 }
 
 function GameViewModel() {
@@ -103,25 +134,33 @@ function GameViewModel() {
         var name = app.storage.get('name');
         return name == null ? 'Guest' : name;
     };
+
     self.startGame = function () {
+        self.currentGame().gameLimit = $('input[name=gamepoints]:checked').val() == null ? 200 : parseInt($('input[name=gamepoints]:checked').val());
+        self.isGameActive(true);
         app.tab_navigate('activegame');
     };
+
     self.newGame = function () {
         app.tab_navigate('players');
     };
+
     self.viewGameSummary = function (game) {
         self.finishedGame(game);
         app.tab_navigate('gamesummary');
     };
+
     self.addHand = function () {
         var score = parseInt($('#puntos').val());
         var winner = $('input[name=team]:checked').val();
         if (!isNaN(score) && winner != null && winner.length > 0) {
-            var hand = new Hand(winner, score);
+            var hand = new Hand();
+            hand.setHand(winner, score);
             if (self.currentGame().hands().length > 0) {
                 var last = self.currentGame().hands()[self.currentGame().hands().length - 1];
-                hand.ellos().old_score = last.ellos().total();
-                hand.nosotros().old_score = last.nosotros().total();
+                hand.ellos.old_score = last.ellos.total;
+                hand.nosotros.old_score = last.nosotros.total;
+                hand.reload();
             }
             hand.id = self.currentGame().hands().length + 1;
             self.currentGame().hands.push(hand);
@@ -147,11 +186,13 @@ function GameViewModel() {
         app.storage.set('games', ko.toJSON(self.games));
         app.tab_navigate('home');
     };
+
     self.removeHand = function (hand) {
         var count = self.currentGame().hands().length;
         if (count > 0)
             self.currentGame().hands.remove(self.currentGame().hands()[count - 1]);
     };
+
     self.saveProfile = function (user) {
         if ($('#profileform').valid()) {
             app.storage.set('isInitialized', 1);
@@ -159,9 +200,6 @@ function GameViewModel() {
             app.storage.set('user', ko.toJSON(self.user));
             app.tab_navigate('home');
         }
-    };
-    self.navigate = function (id) {
-        app.tab_navigate(id);
     };
 
     //Computed Data
@@ -184,11 +222,24 @@ function GameViewModel() {
         }
         app.tab_navigate('home');
     }
+
+    self.loadFromJS = function (_vm) {
+        self.isInitialized = ko.observable(_vm.isInitialized);
+        var cg = new Game();
+        cg.loadFromJS(_vm.currentGame);
+        self.currentGame = ko.observable(cg);
+        if (cg != null){self.currentGame().}
+        self.finishedGame = ko.observable(_vm.finishedGame);
+        self.isGameActive = ko.observable(_vm.isGameActive);
+        self.teams = [{ name: "Ellos", score: 0 }, { name: "Nosotros", score: 0 }];
+        ko.utils.arrayPushAll(self.games(), _vm.games);
+    };
 }
 
 var app = {
     isWebBased: false,
     isOnline: false,
+    viewModel: null,
     tabs: [
         {
             tabId: 'home'
@@ -222,7 +273,6 @@ var app = {
             , title: 'Juego Activo'
 	    , isVisible: false
             , action: function () {
-                app.viewModel.isGameActive(true);
                 return true;
             }
 	}
@@ -273,13 +323,14 @@ var app = {
 		}
     },
     initialize: function () {
+        app.receivedEvent('initialize');
         app.bindEvents();
         var _host = window.location.host;
-        app.isWebBased = _host.indexOf('localhost') >= 0 
-        	     ||  _host.indexOf('azurewebsites.net') >= 0 
-        	     ||  _host.indexOf('homecards.mm.com') >= 0
-        	     ||  _host =='';
-        	     
+        app.isWebBased = _host.indexOf('localhost') >= 0
+        	     || _host.indexOf('azurewebsites.net') >= 0
+        	     || _host.indexOf('homecards.mm.com') >= 0
+        	     || window.cordova == null;
+
         if (app.isWebBased) {
             app.onDeviceReady();
         }
@@ -294,18 +345,25 @@ var app = {
     },
     onDeviceReady: function () {
         app.receivedEvent('deviceready');
-        app.viewModel = new GameViewModel();
-        ko.applyBindings(app.viewModel);
-        $('.template').removeClass('hidden');
-        $("#profileform").validate();
+        if (app.viewModel == null) {
+            app.viewModel = new GameViewModel();
+            var serializedVM = app.storage.get('viewModel');
+            if (serializedVM != null) {
+                app.viewModel.loadFromJS(JSON.parse(serializedVM));
+            }
+            ko.applyBindings(app.viewModel);
+            $('.template').removeClass('hidden');
+            $("#profileform").validate();
+        }
     },
     pause: function () {
         app.receivedEvent('pause');
-        app.storage.set('current_tab', app.currentTab());
+        app.storage.set('current_tab', app.currentTab().tabId);
+        app.storage.set('viewModel', ko.toJSON(app.viewModel));
     },
     resume: function () {
         app.receivedEvent('resume');
-        app.currentTab(app.storage.get('current_tab'));
+        app.tab_navigate(app.storage.get('current_tab'));
         app.onDeviceReady();
     },
     online: function () {
