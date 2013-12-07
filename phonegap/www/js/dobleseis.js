@@ -8,6 +8,7 @@ function User() {
     self.description = ko.observable('');
     self.pin = ko.observable('');
     self.mobileSessionId = '';
+    self.profilepic = 'img/profile_icon.png';
     self.loadFromJS = function (usr) {
         self.userId = usr.userId;
         self.name(usr.name);
@@ -16,42 +17,36 @@ function User() {
         self.description(usr.description);
         self.pin(usr.pin);
         self.mobileSessionId = usr.mobileSessionId;
+        self.profilepic = usr.profilepic;
     };
 }
 
 function Game() {
     var self = this;
     self.gameLimit = 200;
-    self.completedOn = null;
+    self.completedOn = '';
+    self.timelapse = ko.observable('');
     self.player1 = ko.observable('');
     self.player2 = ko.observable('');
     self.player3 = ko.observable('');
     self.player4 = ko.observable('');
     self.hands = ko.observableArray();
     //ko computed
-    self.totalEllos = ko.computed({
-        read: function () {
-            var count = self.hands().length;
-            if (count > 0)
-                return self.hands()[self.hands().length - 1].ellos.total;
-            else
-                return 0;
-        },
-        write: function (value) { return; },
-        owner: this
-    });
+    self.totalEllos = function () {
+        var count = self.hands().length;
+        if (count > 0)
+            return self.hands()[self.hands().length - 1].ellos.total;
+        else
+            return 0;
+    };
 
-    self.totalNosotros = ko.computed({
-        read: function () {
-            var count = self.hands().length;
-            if (count > 0)
-                return self.hands()[self.hands().length - 1].nosotros.total;
-            else
-                return 0;
-        },
-        write: function (value) { return; },
-        owner: this
-    });
+    self.totalNosotros = function () {
+        var count = self.hands().length;
+        if (count > 0)
+            return self.hands()[self.hands().length - 1].nosotros.total;
+        else
+            return 0;
+    };
 
     self.isGameOver = ko.computed(function () {
         if (self.totalNosotros() >= self.gameLimit || self.totalEllos() >= self.gameLimit)
@@ -68,7 +63,23 @@ function Game() {
     });
 
     self.displayText = ko.computed(function () {
-        return self.player1() + ', ' + self.player2() + ' vs ' + self.player3() + ', ' + self.player4();
+        var str = '';
+        var hasEllos = false;
+        var hasNosotros = false;
+        if (self.player1() != '') { str += self.player1(); hasEllos = true; }
+        if (self.player2() != '') {
+            if (hasEllos) { str += ', '; }
+            str += self.player2();
+        }
+        if (self.player3() != '') { str += self.player3(); hasNosotros = true; }
+        if (self.player4() != '') {
+            if (hasNosotros) { str += ', '; }
+            str += self.player4();
+        }
+        if (str == '') {
+            str += 'Players not identified.';
+        }
+        return str;
     });
 
     //functions
@@ -81,6 +92,13 @@ function Game() {
         self.player4 = ko.observable(_game.player4);
         ko.utils.arrayPushAll(self.hands(), _game.hands);
     };
+
+    self.flattened = function () {
+        var x = self;
+        x.totalEllos = self.totalEllos();
+        x.totalNosotros = self.totalNosotros();
+        return x;
+    }
 }
 
 function Hand() {
@@ -101,11 +119,11 @@ function Hand() {
             self.ellos = new TeamScore(0, 0);
             self.nosotros = new TeamScore(0, self.hand_score);
         }
-    }
+    };
     self.reload = function () {
         self.ellos.reload();
         self.nosotros.reload();
-    }
+    };
 }
 
 function TeamScore(old_score, hand_score) {
@@ -124,7 +142,7 @@ function GameViewModel() {
     self.user = new User();
     self.isInitialized = ko.observable(app.storage.get('isInitialized') == null ? false : true);
     self.currentGame = ko.observable(new Game());
-    self.finishedGame = ko.observable(new Game());
+    self.finishedGame = ko.observable(new Game().flattened());
     self.isGameActive = ko.observable(false);
     self.teams = [{ name: "Ellos", score: 0 }, { name: "Nosotros", score: 0 }];
     self.games = ko.observableArray();
@@ -150,6 +168,22 @@ function GameViewModel() {
         app.tab_navigate('gamesummary');
     };
 
+    self.choseProfilePicture = function () {
+        navigator.camera.getPicture(self.onProfilePictureSuccess, self.onProfilePictureFail, {
+            quality: 50,
+            destinationType: Camera.DestinationType.DATA_URL
+        });
+    };
+
+    self.onProfilePictureSuccess = function (imageData) {
+        self.user.profilepic = "data:image/jpeg;base64," + imageData;
+        $('#profilepicture').attr('src', self.user.profilepic);
+    };
+
+    self.onProfilePictureFail = function (message) {
+        alert('Failed because: ' + message);
+    };
+
     self.addHand = function () {
         var score = parseInt($('#puntos').val());
         var winner = $('input[name=team]:checked').val();
@@ -168,9 +202,9 @@ function GameViewModel() {
             if (self.currentGame().isGameOver()) {
                 self.isGameActive(false);
                 self.currentGame().completedOn = new Date();
-                var game = ko.toJS(self.currentGame());
-                self.games.push(game);
-                app.storage.set('games', ko.toJSON(self.games));
+                var game = ko.toJS(self.currentGame().flattened());
+                game.timelapse = ko.observable('');
+                self.games.unshift(game);
                 self.finishedGame(game);
                 self.currentGame(new Game());
                 app.tab_navigate('gamesummary');
@@ -211,28 +245,20 @@ function GameViewModel() {
         return !isNaN(num) && num >= 0 && num <= 200;
     });
 
-    //run
-    if (!self.isInitialized()) { app.tab_navigate('settings'); }
-    else {
-        self.user.loadFromJS(JSON.parse(app.storage.get('user')));
-        var gamesString = app.storage.get('games');
-        if (gamesString != null && gamesString.length > 1) {
-            var games = JSON.parse(app.storage.get('games'));
-            ko.utils.arrayPushAll(self.games(), games);
-        }
-        app.tab_navigate('home');
-    }
-
     self.loadFromJS = function (_vm) {
         self.isInitialized = ko.observable(_vm.isInitialized);
+        self.user = _vm.user;
         var cg = new Game();
         cg.loadFromJS(_vm.currentGame);
         self.currentGame = ko.observable(cg);
-        if (cg != null){self.currentGame().}
         self.finishedGame = ko.observable(_vm.finishedGame);
         self.isGameActive = ko.observable(_vm.isGameActive);
         self.teams = [{ name: "Ellos", score: 0 }, { name: "Nosotros", score: 0 }];
-        ko.utils.arrayPushAll(self.games(), _vm.games);
+        $.each(_vm.games, function (index, game) {
+            game.timelapse = ko.observable('');
+            self.games.push(game);
+        });
+        //ko.utils.arrayPushAll(self.games(), _vm.games);
     };
 }
 
@@ -246,7 +272,7 @@ var app = {
             , title: 'Home'
 	    , isVisible: true
             , action: function () {
-                return true;
+                return app.viewModel.isInitialized();
             }
         }
         , {
@@ -257,6 +283,7 @@ var app = {
                 if (app.viewModel.isGameActive() && !confirm('An active game has been detected. Continue with a new game?')) {
                     return false;
                 }
+                app.viewModel.currentGame(new Game());
                 return true;
             }
         }
@@ -265,6 +292,7 @@ var app = {
             , title: 'Settings'
 	    , isVisible: true
             , action: function () {
+                $('#profilepicture').attr('src', app.viewModel.user.profilepic);
                 return true;
             }
         }
@@ -289,14 +317,34 @@ var app = {
         , title: 'Historial'
         , isVisible: false
         , action: function () {
+            $.each(app.viewModel.games(), function (index, value) {
+                if (value.timelapse == '') {
+                    value.timelapse = ko.observable(app.getDays(value.completedOn));
+                }
+                else{
+                    value.timelapse(app.getDays(value.completedOn));
+                }
+            });
             return true;
         }
     }
+    , {
+        tabId: 'about'
+        , title: 'About'
+        , isVisible: true
+        , action: function () {
+            return true;
+        }
+    }
+
     ],
     currentTab: ko.observable({ tabId: 'home', title: 'Home' }),
     tab_navigate: function (item, sender) {
+        app.log('navigating');
         if ((item == null || item.type == 'GameViewModel') && sender != null) {
-            item = sender.target.dataset.tab;
+            var tab = sender.target.nodeName == 'SPAN' ?
+                      sender.target.parentNode.dataset.tab : sender.target.dataset.tab;
+            item = tab;
         }
         if (typeof (item) == 'string') {
             for (var i = 0; i < app.tabs.length; i++) {
@@ -323,7 +371,7 @@ var app = {
 		}
     },
     initialize: function () {
-        app.receivedEvent('initialize');
+        app.log('initialize');
         app.bindEvents();
         var _host = window.location.host;
         app.isWebBased = _host.indexOf('localhost') >= 0
@@ -332,54 +380,98 @@ var app = {
         	     || window.cordova == null;
 
         if (app.isWebBased) {
+            app.log('app is web based');
             app.onDeviceReady();
         }
     },
     bindEvents: function () {
-        app.receivedEvent('bindEvents');
+        app.log('bindEvents');
         document.addEventListener('deviceready', app.onDeviceReady, false);
+    },
+    addEventListeners: function () {
+        app.log('adding event listeners');
         document.addEventListener('offline', app.offline, false);
         document.addEventListener('online', app.online, false);
         document.addEventListener('pause', app.pause, false);
         document.addEventListener('resume', app.resume, false);
+        document.addEventListener("backbutton", app.onBackKeyDown, false);
+        document.addEventListener("menubutton", app.onMenuKeyDown, false);
     },
     onDeviceReady: function () {
-        app.receivedEvent('deviceready');
+        app.log('deviceready');
+        app.log(app.viewModel);
+        app.addEventListeners();
         if (app.viewModel == null) {
+            app.log('viewModel is null');
             app.viewModel = new GameViewModel();
             var serializedVM = app.storage.get('viewModel');
             if (serializedVM != null) {
                 app.viewModel.loadFromJS(JSON.parse(serializedVM));
             }
             ko.applyBindings(app.viewModel);
-            $('.template').removeClass('hidden');
-            $("#profileform").validate();
+        }
+
+        if (!app.viewModel.isInitialized()) {
+            app.tab_navigate('settings');
+        }
+        else {
+            var lastTab = app.storage.get('current_tab');
+            app.tab_navigate(lastTab != null ? lastTab : 'home');
         }
     },
     pause: function () {
-        app.receivedEvent('pause');
+        app.log('pause');
         app.storage.set('current_tab', app.currentTab().tabId);
         app.storage.set('viewModel', ko.toJSON(app.viewModel));
     },
     resume: function () {
-        app.receivedEvent('resume');
-        app.tab_navigate(app.storage.get('current_tab'));
+        app.log('resume');
         app.onDeviceReady();
     },
     online: function () {
-        app.receivedEvent('online');
-        //app.appIsOnline();
+        app.log('online');
     },
     offline: function () {
-        app.receivedEvent('offline');
-        //app.appIsOffline();
+        app.log('offline');
     },
-    receivedEvent: function (id) {
-        console.log('Received Event: ' + id);
+    onBackKeyDown: function () {
+        app.log('back button pressed');
     },
+    onMenuKeyDown: function () {
+        app.log('menu button pressed');
+        alert('Doble Seis v1.0. Developed by Luis Cintron');
+    },
+    log: function (message, url, linenumber) {
+        setTimeout(function () {
+            var msg = message;
+            if (url != null) { msg += "; " + url; }
+            if (linenumber != null) { msg += "; " + linenumber; }
+            console.log(msg);
+        }, 3000);
+    },
+    getDays: function (datetext) {
+        var dt = new Date(datetext);
+        var currentDate = new Date();
+        if (currentDate.getFullYear() > dt.getFullYear()) {
+            return (currentDate.getFullYear() - dt.getFullYear()) + ' year ago.';
+        }
+        else if (currentDate.getMonth() > dt.getMonth()) {
+            return (currentDate.getMonth() - dt.getMonth()) + ' month ago.';
+        }
+        else if (currentDate.getDay() > dt.getDay()) {
+            return (currentDate.getDay() - dt.getDay()) + ' days ago.';
+        }
+        else if (currentDate.getHours() > dt.getHours()) {
+            return (currentDate.getHours() - dt.getHours()) + ' hours ago.';
+        }
+        else if (currentDate.getMinutes() >= dt.getMinutes()) {
+            return (currentDate.getMinutes() - dt.getMinutes()) + ' minutes ago.';
+        }
+    }
 };
 
 $(function () {
     app.initialize();
+    window.onerror = app.log;
 });
 
