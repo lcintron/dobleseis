@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Ratchet template page</title>
+    <title>DobleSeis</title>
     <meta name="description" content="domino score keeping app">
     <meta name="author" content="luis a cintron">
     <!-- Sets initial viewport load and disables zooming  -->
@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
     <!-- Include the compiled Ratchet CSS -->
-    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/ratchet.css" rel="stylesheet">
 
     <!-- Include the compiled Ratchet JS -->
@@ -25,46 +25,44 @@
 
     <!-- Make sure all your bars are the first things in your <body> -->
     <header class="bar bar-nav">
-        <a class="btn btn-link btn-nav pull-left">
-    <span class="icon icon-left-nav"></span>
-    Back
-  </a>
+        <a id="backbtn" class="btn btn-link btn-nav pull-left" data-bind="click:app.tab_back_navigate()" style="display:none">
+		    <span class="icon icon-left-nav"></span>
+		    Back
+		  </a>
+		  <a class="icon icon-more-vertical pull-right"></a>
       <h1 class="title" data-bind="text: this.app.currentTab().title"></h1>
     </header>
-
+	<nav class="bar bar-tab">
+  <a class="tab-item active" href="#">
+    <span class="icon icon-home"></span>
+    <span class="tab-label">Inicio</span>
+  </a>
+  <a class="tab-item" href="#">
+    <span class="icon icon-person"></span>
+    <span class="tab-label">Perfil</span>
+  </a>
+  <a class="tab-item" href="#">
+    <span class="icon icon-star-filled"></span>
+    <span class="tab-label">Juego</span>
+  </a>
+  <a class="tab-item" href="#">
+    <span class="icon icon-search"></span>
+    <span class="tab-label">Estadisticas</span>
+  </a>
+  <a class="tab-item" href="#">
+    <span class="icon icon-gear"></span>
+    <span class="tab-label">Historial</span>
+  </a>
+</nav>
     <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
     <div class="content">
-      <!--<p class="content-padded">Thanks for downloading Ratchet. This is an example HTML page that's linked up to compiled Ratchet CSS and JS, has the proper meta tags and the HTML structure. Need some more help before you start filling this with your own content? Check out some Ratchet resources:</p>
-      <div class="card">
-        <ul class="table-view">
-          <li class="table-view-cell">
-            <a class="push-right" href="http://goratchet.com">
-              <strong>Ratchet documentation</strong>
-            </a>
-          </li>
-          <li class="table-view-cell">
-            <a class="push-right" href="https://www.github.com/twbs/ratchet/">
-              <strong>Ratchet on Github</strong>
-            </a>
-          </li>
-          <li class="table-view-cell">
-            <a class="push-right" href="https://groups.google.com/forum/#!forum/goratchet">
-              <strong>Ratchet Google group</strong>
-            </a>
-          </li>
-          <li class="table-view-cell">
-            <a class="push-right" href="http://www.twitter.com/GoRatchet">
-              <strong>Ratchet on Twitter</strong>
-            </a>
-          </li>
-        </ul>
-      </div>-->
-                  <!-- Home -->
+      
+            <!-- Home -->
             <div class="template" style="padding:5px;" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'" style="display: none">
             
                 <a class="btn btn-block btn-primary" data-bind="click: newGame"><span>Juego Nuevo</span></a>
                 <a class="btn btn-primary btn-block" data-bind="visible: isGameActive, click: this.app.tab_navigate" data-tab="activegame"><span>Juego Activo</span></button>
-                <a class="btn btn-lg btn-primary btn-block" data-bind="visible: games().length>0, click: this.app.tab_navigate" data-tab="history"><span style="padding-right: 40px">Historial</span></a>
+                <a class="btn btn-primary btn-block" data-bind="visible: games().length>0, click: this.app.tab_navigate" data-tab="history"><span style="padding-right: 40px">Historial</span></a>
 
             </div>
 
@@ -91,14 +89,13 @@
                             <input type="radio" name="gamepoints" id="gamePoints2" value="500" data-bind="checked: currentGame().gameLimit">500
                         </label>
                     </div>
-                    <a class="btn btn-primary btn-block" data-bind="click: startGame">Iniciar</a>
+                    <a class="btn btn-positive btn-block" data-bind="click: startGame">Iniciar</a>
                 </div>
             </div>
 
             <!-- Active Game -->
-            <div class="template" id="activegame" data-bind="visible:this.app.currentTab().tabId == 'activegame'" style="display: none">
+            <div class="template" id="activegame" data-bind="visible:this.app.currentTab().tabId == 'activegame'" style="padding:5px;display: none">
                 <form role="form">
-                    <label for="exampleInputEmail1">Agregar Puntos</label>
                     <br />
                     <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
                         <label class="btn btn-primary btn-lg">
@@ -111,7 +108,7 @@
 
                     <div class="input-group">
                         <input type="number" style="width: 110%" required="required" class="form-control input-lg" id="puntos" placeholder="Puntos"><span class="input-group-btn">
-                            <button class="btn btn-success btn-lg" type="button" data-bind="click:addHand" style="padding-left: 50px; padding-right: 50px;"><span class="glyphicon glyphicon-plus"></span></button>
+                            <button class="btn btn-positive" type="button" data-bind="click:addHand" style="padding-left: 50px; padding-right: 50px;height: 36px;margin-top:-1px"><span class="glyphicon glyphicon-plus"></span></button>
                         </span>
                     </div>
                 </form>
@@ -154,7 +151,7 @@
                 </table>
                 <div class="row">
                     <div class="col-xs-12 col-sm-12">
-                        <button class="btn btn-danger btn-lg btn-block" data-bind="click:removeHand, visible:currentGame().hands().length>0">
+                        <button class="btn btn-negative btn-block" data-bind="click:removeHand, visible:currentGame().hands().length>0">
                             <span class="glyphicon glyphicon-minus"></span>
                         </button>
                     </div>
@@ -169,22 +166,22 @@
                             <br />
                     </h5>
                 </div>
-                <h3 style="margin-top: 10px;">Profile</h3>
+                <h3 style="margin-top: 10px;">Perfil</h3>
                 <div style="margin:20px">
                     <img class="center-block img-rounded" id="profilepicture" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px" data-bind="click:choseProfilePicture" />
-                    <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">tap to change</span>
+                    <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">foto</span>
                 </div>
                 <form data-bind="submit:saveProfile" role="form" id="profileform">
                     <div class="form-group">
-                        <input type="text" class="form-control input-lg" id="name" placeholder="*Full Name" data-bind="value:user.name" required />
+                        <input type="text" class="form-control input-lg" id="name" placeholder="*Nombre" data-bind="value:user.name" required />
                     </div>
                     <div class="form-group">
                         <input type="email" class="form-control input-lg" id="email" placeholder="*Email" data-bind="value:user.email" required />
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control input-lg" id="phone" placeholder="*Phone" data-bind="value:user.phone" required />
+                        <input type="text" class="form-control input-lg" id="phone" placeholder="*Telefono" data-bind="value:user.phone" required />
                     </div>
-                    <button type="submit" class="btn btn-lg btn-block btn-success">Save</button>
+                    <button type="submit" class="btn btn-lg btn-block btn-positive">Guardar</button>
                 </form>
             </div>
 

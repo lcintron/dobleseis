@@ -48,7 +48,7 @@ html {
 body {
   margin: 0;
 }
-
+/*
 a {
   background: transparent;
 }
@@ -61,6 +61,7 @@ a:active,
 a:hover {
   outline: 0;
 }
+*/
 
 h1 {
   margin: 0.67em 0;
@@ -224,9 +225,9 @@ table {
     box-shadow: none !important;
   }
   a,
-  a:visited {
+  /*a:visited {
     text-decoration: underline;
-  }
+  }*/
   a[href]:after {
     content: " (" attr(href) ")";
   }
@@ -321,22 +322,22 @@ textarea {
   line-height: inherit;
 }
 
-a {
+/*a {
   color: #428bca;
   text-decoration: none;
 }
 
-a:hover,
+/*a:hover,
 a:focus {
   color: #2a6496;
   text-decoration: underline;
-}
+}*/
 
 a:focus {
   outline: thin dotted #333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
-}
+}*/
 
 img {
   vertical-align: middle;
@@ -2519,7 +2520,7 @@ fieldset[disabled] .btn-link {
 .btn-link:hover,
 .btn-link:focus {
   color: #2a6496;
-  text-decoration: underline;
+  /*text-decoration: underline;*/
   background-color: transparent;
 }
 
