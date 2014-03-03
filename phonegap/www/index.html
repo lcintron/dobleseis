@@ -1,235 +1,252 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
-    <link rel="icon" href="img/favicon.png">
-    <link rel="shortcut icon" href="img/favicon.png">
+    <meta charset="utf-8">
+    <title>DobleSeis</title>
     <meta name="description" content="domino score keeping app">
     <meta name="author" content="luis a cintron">
-    <title>doble seis</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/sticky-footer-navbar.css" rel="stylesheet">
+    <!-- Sets initial viewport load and disables zooming  -->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Include the compiled Ratchet CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/ratchet.css" rel="stylesheet">
+    <!-- Include the compiled Ratchet JS -->
+    <script src="js/ratchet.js"></script>
     <script type="text/javascript" src="phonegap.js"></script>
 </head>
-
 <body>
-    <div id="wrap">
-        <div class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" data-bind="visible:isInitialized()">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
+    <!-- Make sure all your bars are the first things in your <body> -->
+    <header class="bar bar-nav">
+        <a id="backbtn" class="btn btn-link btn-nav pull-left" data-bind="click:app.tab_back_navigate()" style="display:none">
+            <span class="icon icon-left-nav"></span>
+            <!-- Back -->
+        </a>
+        <a class="icon icon-more-vertical pull-right" data-bind="click: this.app.tab_navigate" data-tab="about"></a>
+        <h1 class="title" data-bind="text: this.app.currentTab().title"></h1>
+    </header>
+    <nav class="bar bar-tab">
+        <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="home">
+            <span class=" icon icon-home">
+            </span>
+            <span class="tab-label">Inicio</span>
+        </a>
+        <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="settings">
+            <span class=" icon icon-person">
+            </span>
+            <span class="tab-label">Perfil</span>
+        </a>
+        <a class="tab-item" href="#" data-bind="click: newGame">
+            <img id="img_menu" src="img/logo_m.png" style="position: fixed; bottom: 0px;display: block; margin-left: auto; margin-right: auto;" />
+            <img id="img_menu_active" src="img/logo_m_active.png" style="position: fixed; bottom: 0px; display: none; margin-left: auto; margin-right: auto;" />
+        </a>
+        <a class="tab-item" href="#">
+            <span class="icon icon-search"></span>
+            <span class="tab-label">Estadisticas</span>
+        </a>
+        <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="history">
+            <span class="icon icon-gear">
+            </span>
+            <span class="tab-label">Historial</span>
+        </a>
+    </nav>
+    <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
+    <div class="content">
+        <!-- Home -->
+        <div class="template" style="padding: 5px; display: none" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'" >
+
+            <!--    <a class="btn btn-block btn-primary" data-bind="click: newGame"><span>Juego Nuevo</span></a>
+                <a class="btn btn-primary btn-block" data-bind="visible: isGameActive, click: this.app.tab_navigate" data-tab="activegame"><span>Juego Activo</span></button>
+                <a class="btn btn-primary btn-block" data-bind="visible: games().length>0, click: this.app.tab_navigate" data-tab="history"><span style="padding-right: 40px">Historial</span></a>-->
+        </div>
+        <!-- Players -->
+        <div class="template" style="padding: 5px; display: none" id="players" data-bind="visible:this.app.currentTab().tabId == 'players'">
+            <div class="form-group">
+                <label>Ellos</label>
+                <input type="text" class="" id="player1" placeholder="Jugador 1" style="margin-bottom: 10px;" data-bind="value: currentGame().player1">
+                <input type="text" class="" id="player2" placeholder="Jugador 2" data-bind="value:currentGame().player2">
+            </div>
+            <div class="form-group">
+                <label>Nosotros</label>
+                <input type="text" class="" id="player3" placeholder="Jugador 3" style="margin-bottom: 10px;" data-bind="value: currentGame().player3">
+                <input type="text" class="" id="player4" placeholder="Jugador 4" data-bind="value: currentGame().player4">
+            </div>
+            <div class="form-group">
+                <label>Puntos x Juego</label>
+                <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
+                    <label class="btn btn-info btn-md active">
+                        <input type="radio" name="gamepoints" id="gamePoints1" value="200" data-bind="checked: currentGame().gameLimit" checked="checked">200
+                    </label>
+                    <label class="btn btn-info btn-md">
+                        <input type="radio" name="gamepoints" id="gamePoints2" value="500" data-bind="checked: currentGame().gameLimit">500
+                    </label>
+                </div>
+                <a class="btn btn-positive btn-block" data-bind="click: startGame">Iniciar</a>
+            </div>
+        </div>
+        <!-- Active Game -->
+        <div class="template" id="activegame" data-bind="visible:this.app.currentTab().tabId == 'activegame'" style="padding:5px;display: none">
+            <form role="form">
+                <br />
+                <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
+                    <label class="btn btn-primary btn-lg">
+                        <input type="radio" name="team" id="option1" value="Ellos">Ellos
+                    </label>
+                    <label class="btn btn-primary btn-lg">
+                        <input type="radio" name="team" id="option2" value="Nosotros">Nosotros
+                    </label>
+                </div>
+                <div class="input-group">
+                    <input type="number" style="width: 110%" required="required" class="form-control input-lg" id="puntos" placeholder="Puntos"><span class="input-group-btn">
+                        <button class="btn btn-positive" type="button" data-bind="click:addHand" style="padding-left: 50px; padding-right: 50px;height: 36px;margin-top:-1px"><span class="glyphicon glyphicon-plus"></span></button>
+                    </span>
+                </div>
+            </form>
+            <hr />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="2">
+                            <span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">
+                                Ellos (<span data-bind="text:currentGame().totalEllos()"></span>)
+                            </span>
+                        </th>
+                        <th colspan="2">
+                            <span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">
+                                Nosotros (<span data-bind="text:currentGame().totalNosotros()"></span>)
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: currentGame().hands">
+                    <tr>
+                        <td style="text-align: center">
+                            <h3 data-bind="text: ellos.old_score"></h3>
+                        </td>
+                        <td style="text-align: center; border-right: 1px solid silver">
+                            <h3 data-bind="text: ellos.hand_score"></h3>
+                        </td>
+                        <td style="text-align: center">
+                            <h3 data-bind="text: nosotros.old_score"></h3>
+                        </td>
+                        <td style="text-align: center">
+                            <h3 data-bind="text: nosotros.hand_score"></h3>
+                        </td>
+                    </tr>
+                    <tr data-bind="visible:id == $root.currentGame().hands().length">
+                        <td style="text-align: center">
+                            <h3 data-bind="text: $root.currentGame().totalEllos()"></h3>
+                        </td>
+                        <td style="border-right: 1px solid silver">&nbsp;</td>
+                        <td style="text-align: center">
+                            <h3 data-bind="text: $root.currentGame().totalNosotros()"></h3>
+                        </td>
+                        <td style="text-align: center">&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12">
+                    <button class="btn btn-negative btn-block" data-bind="click:removeHand, visible:currentGame().hands().length>0">
+                        <span class="glyphicon glyphicon-minus"></span>
                     </button>
-                    <a href="#" class="navbar-brand" data-bind="click: this.app.tab_navigate" data-tab="home">
-                        <img src="img/logo.png" alt="DobleSeis" style="margin-top: -23px; margin-bottom: -10px;" data-tab="home" /></a>
-
-                    <h4 class="navbar-text text-center" style="color: white; display: block" data-bind="text: this.app.currentTab().title"></h4>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav" data-bind="foreach: this.app.tabs">
-                        <li>
-                            <button class="btn btn-link btn-block" style="color: white" data-bind="click: this.app.tab_navigate,text: title, visible: isVisible"></button>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>
-        <div class="container">
-            <!-- Home -->
-            <div class="template" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'" style="display: none">
-                <button class="btn btn-lg btn-primary btn-block" data-bind="click: newGame"><span class="glyphicon glyphicon-star"></span><span>Juego Nuevo</span></button>
-                <button class="btn btn-lg btn-primary btn-block" data-bind="visible: isGameActive, click: this.app.tab_navigate" data-tab="activegame"><span class="glyphicon glyphicon-pencil"></span><span>Juego Activo</span></button>
-                <button class="btn btn-lg btn-primary btn-block" data-bind="visible: games().length>0, click: this.app.tab_navigate" data-tab="history"><span class="glyphicon glyphicon-calendar"></span><span style="padding-right: 40px">Historial</span></button>
-            </div>
-
-            <!-- Players -->
-            <div class="template" id="players" data-bind="visible:this.app.currentTab().tabId == 'players'" style="display: none">
-                <h3>Jugadores</h3>
-                <div class="form-group">
-                    <label>Ellos</label>
-                    <input type="text" class="form-control input-lg" id="player1" placeholder="Jugador 1" style="margin-bottom: 10px;" data-bind="value: currentGame().player1">
-                    <input type="text" class="form-control input-lg" id="player2" placeholder="Jugador 2" data-bind="value:currentGame().player2">
-                </div>
-                <div class="form-group">
-                    <label>Nosotros</label>
-                    <input type="text" class="form-control input-lg" id="player3" placeholder="Jugador 3" style="margin-bottom: 10px;" data-bind="value: currentGame().player3">
-                    <input type="text" class="form-control input-lg" id="player4" placeholder="Jugador 4" data-bind="value: currentGame().player4">
-                </div>
-                <div class="form-group">
-                    <label>Puntos</label>
-                    <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
-                        <label class="btn btn-info btn-md active">
-                            <input type="radio" name="gamepoints" id="gamePoints1" value="200" data-bind="checked: currentGame().gameLimit" checked="checked">200
-                        </label>
-                        <label class="btn btn-info btn-md">
-                            <input type="radio" name="gamepoints" id="gamePoints2" value="500" data-bind="checked: currentGame().gameLimit">500
-                        </label>
-                    </div>
-                    <a href="#" class="btn btn-lg btn-primary btn-block" data-bind="click: startGame">Iniciar</a>
-                </div>
-            </div>
-
-            <!-- Active Game -->
-            <div class="template" id="activegame" data-bind="visible:this.app.currentTab().tabId == 'activegame'" style="display: none">
-                <form role="form">
-                    <label for="exampleInputEmail1">Agregar Puntos</label>
+        <!-- Settings -->
+        <div class="template" style="padding: 5px; display: none" id="settings" data-bind="visible:this.app.currentTab().tabId == 'settings'">
+            <div data-bind="visible:!isInitialized()">
+                <h3 class="text-center" style="margin-top: 10px;">Bienvenido!</h3>
+                <h5 data-bind="" class="text-center">
+                    Por favor llene la siguiente forma antes de continuar.
                     <br />
-                    <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
-                        <label class="btn btn-primary btn-lg">
-                            <input type="radio" name="team" id="option1" value="Ellos">Ellos
-                        </label>
-                        <label class="btn btn-primary btn-lg">
-                            <input type="radio" name="team" id="option2" value="Nosotros">Nosotros
-                        </label>
-                    </div>
-
-                    <div class="input-group">
-                        <input type="number" style="width: 110%" required="required" class="form-control input-lg" id="puntos" placeholder="Puntos"><span class="input-group-btn">
-                            <button class="btn btn-success btn-lg" type="button" data-bind="click:addHand" style="padding-left: 50px; padding-right: 50px;"><span class="glyphicon glyphicon-plus"></span></button>
-                        </span>
-                    </div>
-                </form>
-                <hr />
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th colspan="2"><span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">Ellos (<span
-                                data-bind="text:currentGame().totalEllos()"></span>)</span></th>
-                            <th colspan="2"><span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">Nosotros (<span
-                                data-bind="text:currentGame().totalNosotros()"></span>)</span></th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: currentGame().hands">
-                        <tr>
-                            <td style="text-align: center">
-                                <h3 data-bind="text: ellos.old_score"></h3>
-                            </td>
-                            <td style="text-align: center; border-right: 1px solid silver">
-                                <h3 data-bind="text: ellos.hand_score"></h3>
-                            </td>
-                            <td style="text-align: center">
-                                <h3 data-bind="text: nosotros.old_score"></h3>
-                            </td>
-                            <td style="text-align: center">
-                                <h3 data-bind="text: nosotros.hand_score"></h3>
-                            </td>
-                        </tr>
-                        <tr data-bind="visible:id == $root.currentGame().hands().length">
-                            <td style="text-align: center">
-                                <h3 data-bind="text: $root.currentGame().totalEllos()"></h3>
-                            </td>
-                            <td style="border-right: 1px solid silver">&nbsp;</td>
-                            <td style="text-align: center">
-                                <h3 data-bind="text: $root.currentGame().totalNosotros()"></h3>
-                            </td>
-                            <td style="text-align: center">&nbsp;</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12">
-                        <button class="btn btn-danger btn-lg btn-block" data-bind="click:removeHand, visible:currentGame().hands().length>0">
-                            <span class="glyphicon glyphicon-minus"></span>
-                        </button>
-                    </div>
-                </div>
+                </h5>
             </div>
-
-            <!-- Settings -->
-            <div class="template" id="settings" data-bind="visible:this.app.currentTab().tabId == 'settings'" style="display: none">
-                <div data-bind="visible:!isInitialized()">
-                    <h3 class="text-center" style="margin-top: 10px;">Bienvenido!</h3>
-                    <h5 data-bind="" class="text-center">Por favor llene la siguiente forma antes de continuar.
-                            <br />
-                    </h5>
-                </div>
-                <h3 style="margin-top: 10px;">Profile</h3>
-                <div style="margin:20px">
-                    <img class="center-block img-rounded" id="profilepicture" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px" data-bind="click:choseProfilePicture" />
-                    <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">tap to change</span>
-                </div>
-                <form data-bind="submit:saveProfile" role="form" id="profileform">
-                    <div class="form-group">
-                        <input type="text" class="form-control input-lg" id="name" placeholder="*Full Name" data-bind="value:user.name" required />
-                    </div>
-                    <div class="form-group">
-                        <input type="email" class="form-control input-lg" id="email" placeholder="*Email" data-bind="value:user.email" required />
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control input-lg" id="phone" placeholder="*Phone" data-bind="value:user.phone" required />
-                    </div>
-                    <button type="submit" class="btn btn-lg btn-block btn-success">Save</button>
-                </form>
+            <!-- <h3 style="margin-top: 10px;">Perfil</h3>-->
+            <div style="margin:20px">
+                <img class="center-block img-rounded" id="profilepicture" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px" data-bind="click:choseProfilePicture" />
+                <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">foto</span>
             </div>
-
-            <!-- History -->
-            <div class="template" id="history" data-bind="visible:this.app.currentTab().tabId == 'history'" style="display: none">
-                <h3 style="margin-top: 10px;">Juegos</h3>
-                <div class="list-group" data-bind="foreach:games">
-                    <a href="#" class="list-group-item" data-bind="click: $root.viewGameSummary">
-                        <h4 class="list-group-item-heading">Ellos(<span data-bind="text:totalEllos"></span>) - Nosotros(<span data-bind="text:totalNosotros"></span>)
-                        </h4>
-                        <div class="gamebadge" style="float: right; margin-top: -30px; margin-right: -10px; font-size: 1.6em;">
-                            <span style="color: green;" class="glyphicon glyphicon-thumbs-up" data-bind="visible: won"></span>
-                            <span style="color: red;" class="glyphicon glyphicon-thumbs-down" data-bind="visible:!won"></span>
-                        </div>
-                        <p class="list-group-item-text" data-bind="text:displayText"></p>
-                        <p class="list-group-item-text" data-bind="text:timelapse()"></p>
-                    </a>
+            <form data-bind="submit:saveProfile" role="form" id="profileform">
+                <div class="form-group">
+                    <input type="text" class="form-control input-lg" id="name" placeholder="*Nombre" data-bind="value:user.name" required />
                 </div>
-            </div>
-
-             <!-- About -->
-            <div class="template" id="about" data-bind="visible:this.app.currentTab().tabId == 'about'" style="display: none">
-                <div style="margin-top:100px;margin-bottom:100px">
-                    <img src="img/ds.png" class="center-block img-responsive" />
-                    <p style="text-align:center">v1.0 <br /><b>BETA</b></p>
+                <div class="form-group">
+                    <input type="email" class="form-control input-lg" id="email" placeholder="*Email" data-bind="value:user.email" required />
                 </div>
-                <div>
-                    <p style="text-align:center">Developed by Luis Cintron. Send feedback to <a href="mailto:l.cintron@live.com">l.cintron@live.com</a></p>
+                <div class="form-group">
+                    <input type="text" class="form-control input-lg" id="phone" placeholder="*Telefono" data-bind="value:user.phone" required />
                 </div>
-            </div>
-
-            <!-- Game Summary -->
-            <div class="template" id="gamesummary" data-bind="visible:this.app.currentTab().tabId == 'gamesummary', with: finishedGame()" style="display: none">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th colspan="2"><span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">Ellos (<span
-                                data-bind="text: totalEllos"></span>)</span></th>
-                            <th colspan="2"><span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">Nosotros(<span
-                                data-bind="text: totalNosotros"></span>)</span></th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: hands">
-                        <tr>
-                            <td style="text-align: center">
-                                <h3 data-bind="text: ellos.old_score"></h3>
-                            </td>
-                            <td style="text-align: center; border-right: 1px solid silver">
-                                <h3 data-bind="text: ellos.hand_score"></h3>
-                            </td>
-                            <td style="text-align: center">
-                                <h3 data-bind="text: nosotros.old_score"></h3>
-                            </td>
-                            <td style="text-align: center">
-                                <h3 data-bind="text: nosotros.hand_score"></h3>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button class="btn btn-primary btn-lg btn-block" data-bind="click:this.app.viewModel.newGame"><span class="glyphicon glyphicon-star"></span> Juego Nuevo</button>
-                <button class="btn btn-danger btn-lg btn-block" data-bind="click:this.app.viewModel.deleteGame"><span class="glyphicon glyphicon-remove"></span> Borrar Juego</button>
+                <button type="submit" class="btn btn-lg btn-block btn-positive">Guardar</button>
+            </form>
+        </div>
+        <!-- History -->
+        <div class="template" style="padding: 5px; display: none" id="history" data-bind="visible:this.app.currentTab().tabId == 'history'">
+            <!-- <h3 style="margin-top: 10px;">Juegos</h3>-->
+            <div class="list-group" data-bind="foreach:games">
+                <a href="#" class="list-group-item" data-bind="click: $root.viewGameSummary">
+                    <h4 class="list-group-item-heading">
+                        Ellos(<span data-bind="text:totalEllos"></span>) - Nosotros(<span data-bind="text:totalNosotros"></span>)
+                    </h4>
+                    <div class="gamebadge" style="float: right; margin-top: -30px; margin-right: -10px; font-size: 1.6em;">
+                        <span style="color: green;" class="glyphicon glyphicon-thumbs-up" data-bind="visible: won"></span>
+                        <span style="color: red;" class="glyphicon glyphicon-thumbs-down" data-bind="visible:!won"></span>
+                    </div>
+                    <p class="list-group-item-text" data-bind="text:displayText"></p>
+                    <p class="list-group-item-text" data-bind="text:timelapse()"></p>
+                </a>
             </div>
         </div>
+        <!-- About -->
+        <div class="template" id="about" data-bind="visible:this.app.currentTab().tabId == 'about'" style="display: none">
+            <div style="margin-top:100px;margin-bottom:100px">
+                <img src="img/ds.png" class="center-block img-responsive" />
+                <p style="text-align:center">v1.0 <br /><b>BETA</b></p>
+            </div>
+            <div>
+                <p style="text-align:center">Developed by Luis Cintron. Send feedback to <a href="mailto:l.cintron@live.com">l.cintron@live.com</a></p>
+            </div>
+        </div>
+        <!-- Game Summary -->
+        <div class="template" id="gamesummary" data-bind="visible:this.app.currentTab().tabId == 'gamesummary', with: finishedGame()" style="padding:5px;display: none">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="2">
+                            <span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">
+                                Ellos (<span data-bind="text: totalEllos"></span>)
+                            </span>
+                        </th>
+                        <th colspan="2">
+                            <span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">
+                                Nosotros(<span data-bind="text: totalNosotros"></span>)
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: hands">
+                    <tr>
+                        <td style="text-align: center">
+                            <h3 data-bind="text: ellos.old_score"></h3>
+                        </td>
+                        <td style="text-align: center; border-right: 1px solid silver">
+                            <h3 data-bind="text: ellos.hand_score"></h3>
+                        </td>
+                        <td style="text-align: center">
+                            <h3 data-bind="text: nosotros.old_score"></h3>
+                        </td>
+                        <td style="text-align: center">
+                            <h3 data-bind="text: nosotros.hand_score"></h3>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-primary btn-block" data-bind="click:this.app.viewModel.newGame"><span class="glyphicon glyphicon-star"></span> Juego Nuevo</button>
+            <button class="btn btn-negative btn-block" data-bind="click:this.app.viewModel.deleteGame"><span class="glyphicon glyphicon-remove"></span> Borrar Juego</button>
+        </div>
+    </div>
     </div>
     <!-- Scripts -->
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
