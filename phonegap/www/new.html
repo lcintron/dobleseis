@@ -27,29 +27,28 @@
     <header class="bar bar-nav">
         <a id="backbtn" class="btn btn-link btn-nav pull-left" data-bind="click:app.tab_back_navigate()" style="display:none">
 		    <span class="icon icon-left-nav"></span>
-		    Back
+		    <!-- Back -->
 		  </a>
-		  <a class="icon icon-more-vertical pull-right"></a>
+		  <a class="icon icon-more-vertical pull-right" data-bind="click: this.app.tab_navigate" data-tab="about"></a>
       <h1 class="title" data-bind="text: this.app.currentTab().title"></h1>
     </header>
 	<nav class="bar bar-tab">
-  <a class="tab-item active" href="#">
+  <a class="tab-item active" href="#" data-bind="click: this.app.tab_navigate" data-tab="home"">
     <span class="icon icon-home"></span>
     <span class="tab-label">Inicio</span>
   </a>
-  <a class="tab-item" href="#">
+  <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="settings"">
     <span class="icon icon-person"></span>
     <span class="tab-label">Perfil</span>
   </a>
-  <a class="tab-item" href="#">
-    <span class="icon icon-star-filled"></span>
-    <span class="tab-label">Juego</span>
-  </a>
+    <a class="tab-item" href="#" data-bind="click: newGame" >
+    <img src="img/apple-touch-icon-57-precomposed.png" style="position: fixed;bottom: 0px;display: block;margin-left: auto;margin-right: auto;"/>  </a>
+
   <a class="tab-item" href="#">
     <span class="icon icon-search"></span>
     <span class="tab-label">Estadisticas</span>
   </a>
-  <a class="tab-item" href="#">
+  <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="history"">
     <span class="icon icon-gear"></span>
     <span class="tab-label">Historial</span>
   </a>
@@ -60,9 +59,9 @@
             <!-- Home -->
             <div class="template" style="padding:5px;" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'" style="display: none">
             
-                <a class="btn btn-block btn-primary" data-bind="click: newGame"><span>Juego Nuevo</span></a>
+            <!--    <a class="btn btn-block btn-primary" data-bind="click: newGame"><span>Juego Nuevo</span></a>
                 <a class="btn btn-primary btn-block" data-bind="visible: isGameActive, click: this.app.tab_navigate" data-tab="activegame"><span>Juego Activo</span></button>
-                <a class="btn btn-primary btn-block" data-bind="visible: games().length>0, click: this.app.tab_navigate" data-tab="history"><span style="padding-right: 40px">Historial</span></a>
+                <a class="btn btn-primary btn-block" data-bind="visible: games().length>0, click: this.app.tab_navigate" data-tab="history"><span style="padding-right: 40px">Historial</span></a>-->
 
             </div>
 
@@ -94,7 +93,7 @@
             </div>
 
             <!-- Active Game -->
-            <div class="template" id="activegame" data-bind="visible:this.app.currentTab().tabId == 'activegame'" style="padding:5px;display: none">
+            <div class="template" id="activegame" style="padding:5px;" data-bind="visible:this.app.currentTab().tabId == 'activegame'" style="padding:5px;display: none">
                 <form role="form">
                     <br />
                     <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
@@ -159,14 +158,14 @@
             </div>
 
             <!-- Settings -->
-            <div class="template" id="settings" data-bind="visible:this.app.currentTab().tabId == 'settings'" style="display: none">
+            <div class="template" style="padding:5px;" id="settings" data-bind="visible:this.app.currentTab().tabId == 'settings'" style="display: none">
                 <div data-bind="visible:!isInitialized()">
                     <h3 class="text-center" style="margin-top: 10px;">Bienvenido!</h3>
                     <h5 data-bind="" class="text-center">Por favor llene la siguiente forma antes de continuar.
                             <br />
                     </h5>
                 </div>
-                <h3 style="margin-top: 10px;">Perfil</h3>
+                <!-- <h3 style="margin-top: 10px;">Perfil</h3>-->
                 <div style="margin:20px">
                     <img class="center-block img-rounded" id="profilepicture" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px" data-bind="click:choseProfilePicture" />
                     <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">foto</span>
@@ -186,8 +185,8 @@
             </div>
 
             <!-- History -->
-            <div class="template" id="history" data-bind="visible:this.app.currentTab().tabId == 'history'" style="display: none">
-                <h3 style="margin-top: 10px;">Juegos</h3>
+            <div class="template" style="padding:5px;" id="history" data-bind="visible:this.app.currentTab().tabId == 'history'" style="display: none">
+                <!-- <h3 style="margin-top: 10px;">Juegos</h3>-->
                 <div class="list-group" data-bind="foreach:games">
                     <a href="#" class="list-group-item" data-bind="click: $root.viewGameSummary">
                         <h4 class="list-group-item-heading">Ellos(<span data-bind="text:totalEllos"></span>) - Nosotros(<span data-bind="text:totalNosotros"></span>)

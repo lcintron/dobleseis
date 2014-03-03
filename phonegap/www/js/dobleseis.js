@@ -334,7 +334,7 @@ var app = {
 	tabs : [
 			{
 				tabId : 'home',
-				title : 'Home',
+				title : 'Inicio',
 				isVisible : true,
 				action : function() {
 					return app.viewModel.isInitialized();
@@ -355,7 +355,7 @@ var app = {
 			},
 			{
 				tabId : 'settings',
-				title : 'Settings',
+				title : 'Perfil',
 				isVisible : true,
 				action : function() {
 					$('#profilepicture').attr('src',
