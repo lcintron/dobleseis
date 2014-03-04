@@ -55,11 +55,19 @@
     <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
     <div class="content">
         <!-- Home -->
-        <div class="template" style="padding: 5px; display: none" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'" >
-
-            <!--    <a class="btn btn-block btn-primary" data-bind="click: newGame"><span>Juego Nuevo</span></a>
-                <a class="btn btn-primary btn-block" data-bind="visible: isGameActive, click: this.app.tab_navigate" data-tab="activegame"><span>Juego Activo</span></button>
-                <a class="btn btn-primary btn-block" data-bind="visible: games().length>0, click: this.app.tab_navigate" data-tab="history"><span style="padding-right: 40px">Historial</span></a>-->
+        <div class="template" style=" display: none" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'">
+            <div class="row start_summary" style="background-image: url('img/domino_backsplash.jpg'); background-repeat: no-repeat; background-size: 100%; min-height: 150px; ">
+                <div class="col-xs-4" style=" text-align: center; margin-top: 25px; ">
+                    <h4 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em #808080;">Juegos</h4>
+                    <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em #979797;">258</h1>
+                </div>
+                <div class="col-xs-4" style="vertical-align:middle;padding-top:15px;padding-bottom:15px;"><img src="img/profile_icon.png" alt="..." class="profilepicture img-circle" style="width:100%;height:auto;vertical-align: middle;margin-left: auto; margin-right: auto; border: solid 1px silver; "></div>
+                <div class="col-xs-4" style=" text-align: center; margin-top: 25px; ">
+                    <h4 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em #808080; ">Ganados (%)</h4>
+                    <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em #979797;">100%</h1>
+                </div>
+            </div>
+            <div class="table-view-divider" style="text-align:center">Juegos Recientes</div>
         </div>
         <!-- Players -->
         <div class="template" style="padding: 5px; display: none" id="players" data-bind="visible:this.app.currentTab().tabId == 'players'">
@@ -166,7 +174,7 @@
             </div>
             <!-- <h3 style="margin-top: 10px;">Perfil</h3>-->
             <div style="margin:20px">
-                <img class="center-block img-rounded" id="profilepicture" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px" data-bind="click:choseProfilePicture" />
+                <img class="profilepicture center-block img-rounded" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px" data-bind="click:choseProfilePicture" />
                 <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">foto</span>
             </div>
             <form data-bind="submit:saveProfile" role="form" id="profileform">
@@ -183,9 +191,9 @@
             </form>
         </div>
         <!-- History -->
-        <div class="template" style="padding: 5px; display: none" id="history" data-bind="visible:this.app.currentTab().tabId == 'history'">
+        <div class="template" style="display: none" id="history" data-bind="visible:this.app.currentTab().tabId == 'history'">
             <!-- <h3 style="margin-top: 10px;">Juegos</h3>-->
-            <div class="list-group" data-bind="foreach:games">
+            <!--<div class="list-group" data-bind="foreach:games">
                 <a href="#" class="list-group-item" data-bind="click: $root.viewGameSummary">
                     <h4 class="list-group-item-heading">
                         Ellos(<span data-bind="text:totalEllos"></span>) - Nosotros(<span data-bind="text:totalNosotros"></span>)
@@ -197,7 +205,18 @@
                     <p class="list-group-item-text" data-bind="text:displayText"></p>
                     <p class="list-group-item-text" data-bind="text:timelapse()"></p>
                 </a>
-            </div>
+            </div>-->
+            <ul class="table-view" data-bind="foreach:games">
+                <li class="table-view-cell media">
+                    <a class="push-right" class="list-group-item" data-bind="click: $root.viewGameSummary">
+                        <div class="media-body">
+                            Ellos(<span data-bind="text:totalEllos"></span>) - Nosotros(<span data-bind="text:totalNosotros"></span>)
+                            <p class="list-group-item-text" data-bind="text:displayText"></p>
+                            <p class="list-group-item-text" data-bind="text:timelapse()"></p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
         </div>
         <!-- About -->
         <div class="template" id="about" data-bind="visible:this.app.currentTab().tabId == 'about'" style="display: none">

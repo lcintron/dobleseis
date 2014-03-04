@@ -98,7 +98,7 @@ function Game() {
         }
 
         if (str == '') {
-            str += 'Players not identified.';
+            str += 'Jugadores no identificados.';
         }
         return str;
     });
@@ -219,7 +219,7 @@ function GameViewModel() {
     };
 
     self.onScorePictureSuccess = function (imageURI) {
-        var options = new FileUploadOptions();
+        /*var options = new FileUploadOptions();
         options.fileKey = "file";
         options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
         options.mimeType = "image/jpeg";
@@ -232,7 +232,7 @@ function GameViewModel() {
 
         var ft = new FileTransfer();
         ft.upload(imageURI, encodeURI("http://some.server.com/upload.php"),
-				win, fail, options);
+				win, fail, options);*/
     }
 
     self.onProfilePictureFail = function (message) {
@@ -347,7 +347,7 @@ var app = {
 			    isVisible: true,
 			    action: function () {
 			        if (app.viewModel.isGameActive()
-							&& !confirm('An active game has been detected. Continue with a new game?')) {
+							&& !confirm('Existe un juego en progreso. Desea empezar un juego nuevo?')) {
 			            return false;
 			        }
 			        app.viewModel.currentGame(new Game());
@@ -359,7 +359,7 @@ var app = {
 			    title: 'Perfil',
 			    isVisible: true,
 			    action: function () {
-			        $('#profilepicture').attr('src',
+			        $('.profilepicture').attr('src',
 							app.viewModel.user.profilepic);
 			        return true;
 			    }
