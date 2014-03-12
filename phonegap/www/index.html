@@ -188,17 +188,20 @@
             <!-- <h3 style="margin-top: 10px;">Perfil</h3>-->
             <div style="margin:20px">
                 <img class="profilepicture center-block img-rounded" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px" data-bind="click:choseProfilePicture" />
-                <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">foto</span>
+                <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">cambiar</span>
             </div>
-            <form data-bind="submit:saveProfile" role="form" id="profileform">
-                <div class="form-group">
-                    <input type="text" class="form-control input-lg" id="name" placeholder="*Nombre" data-bind="value:user.name" required />
+            <form class="input-group" data-bind="submit:saveProfile" role="form" id="profileform">
+                <div class="input-row">
+		    <label>Nombre</label>
+                    <input type="text" id="name" data-bind="value:user.name" required />
                 </div>
-                <div class="form-group">
-                    <input type="email" class="form-control input-lg" id="email" placeholder="*Email" data-bind="value:user.email" required />
+                <div class="input-row">
+		    <label>Email</label>
+                    <input type="email" id="email" data-bind="value:user.email" required />
                 </div>
-                <div class="form-group">
-                    <input type="text" class="form-control input-lg" id="phone" placeholder="*Telefono" data-bind="value:user.phone" required />
+                <div class="input-row">
+		    <label>Telefono</label>
+                    <input type="text" id="phone" data-bind="value:user.phone" required />
                 </div>
                 <button type="submit" class="btn btn-lg btn-block btn-positive">Guardar</button>
             </form>

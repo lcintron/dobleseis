@@ -6,7 +6,6 @@ function User() {
     self.email = ko.observable('');
     self.phone = ko.observable('');
     self.description = ko.observable('');
-    self.pin = ko.observable('');
     self.mobileSessionId = '';
     self.profilepic = 'img/profile_icon.png';
     self.loadFromJS = function (usr) {
@@ -367,7 +366,7 @@ var app = {
 			{
 			    tabId: 'activegame',
 			    title: 'Juego Activo',
-			    isVisible: false,
+			    isVisible: true,
 			    action: function () {
 			        if (app.viewModel.isGameActive())
 			            return true;
@@ -386,7 +385,7 @@ var app = {
 			{
 			    tabId: 'history',
 			    title: 'Historial',
-			    isVisible: false,
+			    isVisible: true,
 			    action: function () {
 			        $.each(app.viewModel.games(), function (index, value) {
 			            if (value.timelapse == '') {
@@ -434,7 +433,8 @@ var app = {
             }
         }
         if (item != null && item.action()) {
-            if (sender != 'back') {
+            //update navigation stack
+            /*if (sender != 'back' &&) {
                 app.navStack.push(app.currentTab());
                 if (app.navStack().length > 1) {
                     $('#backbtn').show();
@@ -442,10 +442,10 @@ var app = {
             }
             else if (app.navStack().length <= 1) {
                 $('#backbtn').hide();
-            }
+            }*/
             app.currentTab(item);
         }
-        $('.navbar-collapse').removeClass('in').addClass('collapse');
+        //$('.navbar-collapse').removeClass('in').addClass('collapse');
     },
     tab_back_navigate: function () {
         if (app.navStack().length > 0) {
@@ -468,10 +468,8 @@ var app = {
         app.log('initialize');
         app.bindEvents();
         var _host = window.location.host;
-        app.isWebBased = _host.indexOf('localhost') >= 0
-				|| _host.indexOf('azurewebsites.net') >= 0
-				|| _host.indexOf('homecards.mm.com') >= 0
-				|| window.cordova == null;
+	app.log(_host);
+        app.isWebBased = window.cordova == null;
 
         if (app.isWebBased) {
             app.log('app is web based');
@@ -533,7 +531,8 @@ var app = {
     },
     onMenuKeyDown: function () {
         app.log('menu button pressed');
-        alert('Doble Seis v1.0. Developed by Luis Cintron');
+        //alert('Doble Seis v1.0. Developed by Luis Cintron');
+	app.tab_navigate('about');
     },
     log: function (message, url, linenumber) {
         setTimeout(function () {
