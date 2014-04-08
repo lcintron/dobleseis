@@ -345,9 +345,13 @@ var app = {
 			    title: 'Juego Nuevo',
 			    isVisible: true,
 			    action: function () {
-			        if (app.viewModel.isGameActive()
+			        /*if (app.viewModel.isGameActive()
 							&& !confirm('Existe un juego en progreso. Desea empezar un juego nuevo?')) {
 			            return false;
+			        }*/
+				if (app.viewModel.isGameActive()) {
+			                
+					return true;
 			        }
 			        app.viewModel.currentGame(new Game());
 			        return true;
@@ -368,8 +372,10 @@ var app = {
 			    title: 'Juego Activo',
 			    isVisible: true,
 			    action: function () {
-			        if (app.viewModel.isGameActive())
+			        if (app.viewModel.isGameActive()){
+				    app.tab_navigate('activegame');
 			            return true;
+				}
 			        else
 			            return false;
 			    }
@@ -397,9 +403,18 @@ var app = {
 			        });
 			        return true;
 			    }
-			}, {
+			}, 
+                        {
 			    tabId: 'about',
 			    title: 'About',
+			    isVisible: true,
+			    action: function () {
+			        return true;
+			    }
+			}, 
+                        {
+			    tabId: 'store',
+			    title: 'Tienda',
 			    isVisible: true,
 			    action: function () {
 			        return true;

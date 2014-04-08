@@ -39,17 +39,17 @@
             <span class="tab-label">Perfil</span>
         </a>
         <a class="tab-item" href="#" data-bind="click: newGame">
-            <img id="img_menu" src="img/logo_m.png" style="position: fixed; bottom: 0px;display: block; margin-left: auto; margin-right: auto;" />
-            <img id="img_menu_active" src="img/logo_m_active.png" style="position: fixed; bottom: 0px; display: none; margin-left: auto; margin-right: auto;" />
+            <img id="img_menu" src="img/logo_m.png" style="position: fixed; bottom: 0px;display: block; margin-left: auto; margin-right: auto;left:0;right:0;" />
+            <img id="img_menu_active" src="img/logo_m_active.png" style="position: fixed; bottom: 0px; display: none; margin-left: auto; margin-right: auto;left:0;right:0;" />
         </a>
         <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="history">
             <span class="icon icon-gear">
             </span>
             <span class="tab-label">Historial</span>
         </a>
-        <a class="tab-item" href="#">
-            <span class="icon icon-search"></span>
-            <span class="tab-label">Reglas</span>
+        <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="store">
+            <span class="icon icon-star"></span>
+            <span class="tab-label">Tienda</span>
         </a>
     </nav>
     <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
@@ -58,15 +58,16 @@
         <div class="template" style=" display: none" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'">
             <div class="start_summary" style="background-image: url('img/domino_backsplash.jpg'); background-repeat: no-repeat; background-size: 100%; min-height: 150px; ">
                 <div class="col-xs-4" style=" text-align: center; margin-top: 25px; ">
-                    <h4 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em 0.1em #808080;">Juegos</h4>
+                    <h3 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em 0.1em #808080;">Juegos</h3>
                     <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em 0.1em #979797;" data-bind="text:games().length"></h1>
                 </div>
-                <div class="col-xs-4" style="vertical-align:middle;padding-top:15px;padding-bottom:15px;">
-                	<img alt="..." data-bind="attr{src:user.profilepic}" class="profilepicture img-rectangle" style="width:100%;height:auto;vertical-align: middle;margin-left: auto; margin-right: auto; border: solid 1px silver; ">
+               <div class="col-xs-4" style=" text-align: center; margin-top: 25px; ">
+                    <h3 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em 0.1em #808080; ">Chivas</h3>
+                    <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em 0.1em #979797;">0</h1>
                 </div>
                 <div class="col-xs-4" style=" text-align: center; margin-top: 25px; ">
-                    <h4 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em 0.1em #808080; ">Ganados</h4>
-                    <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em 0.1em #979797;">100%</h1>
+                    <h3 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em 0.1em #808080; ">Ganados</h3>
+                    <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em 0.1em #979797;">0%</h1>
                 </div>
             </div>
             <div class="table-view-divider" style="text-align:center">Juegos Recientes</div>
@@ -81,6 +82,9 @@
                     </a>
                 </li>
             </ul>
+	    <div class='init-msg' data-bind="visible:games().length==0">
+		<p style="text-align:center;vertical-align:bottom">Toque el domino para comenzar un juego.</p>
+	    </div>
         </div>
         <!-- Players -->
         <div class="template" style="padding: 5px; display: none" id="players" data-bind="visible:this.app.currentTab().tabId == 'players'">
@@ -242,6 +246,13 @@
             </div>
             <div>
                 <p style="text-align:center">Developed by Luis Cintron. Send feedback to <a href="mailto:l.cintron@live.com">l.cintron@live.com</a></p>
+            </div>
+        </div>
+	<!-- Store -->
+        <div class="template" id="store" data-bind="visible:this.app.currentTab().tabId == 'store'" style="display: none">
+            <div style="margin-top:100px;margin-bottom:100px">
+                <img src="img/ds.png" class="center-block img-responsive" />
+                <p style="text-align:center">El desarollo de nuestra tienda todavia esta en progreso. Por favor, regrese pronto. Gracias :)</p>
             </div>
         </div>
         <!-- Game Summary -->
