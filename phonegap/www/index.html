@@ -24,50 +24,55 @@
             <span class="icon icon-left-nav"></span>
             <!-- Back -->
         </a>
-        <a class="icon icon-more-vertical pull-right" data-bind="click: this.app.tab_navigate" data-tab="about"></a>
+        <!--<a class="icon icon-more-vertical pull-right" data-bind="click: this.app.tab_navigate" data-tab="about"></a>-->
+        <a class="icon icon-compose pull-right" data-bind="click:this.app.tab_navigate, visible:app.viewModel.isGameActive()" data-tab="players"></a>
         <h1 class="title" data-bind="text: this.app.currentTab().title"></h1>
     </header>
     <nav class="bar bar-tab">
-        <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="home">
+        <a class="tab-item tab-home" href="#" data-bind="click: this.app.tab_navigate" data-tab="home">
             <span class=" icon icon-home">
             </span>
             <span class="tab-label">Inicio</span>
         </a>
-        <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="settings">
+        <a class="tab-item tab-settings" href="#" data-bind="click: this.app.tab_navigate" data-tab="settings">
             <span class=" icon icon-person">
             </span>
             <span class="tab-label">Perfil</span>
         </a>
-        <a class="tab-item" href="#" data-bind="click: newGame">
+        <a class="tab-item tab-newGame" href="#" data-bind="click: newGame">
             <img id="img_menu" src="img/logo_m.png" style="position: fixed; bottom: 0px;display: block; margin-left: auto; margin-right: auto;left:0;right:0;" />
             <img id="img_menu_active" src="img/logo_m_active.png" style="position: fixed; bottom: 0px; display: none; margin-left: auto; margin-right: auto;left:0;right:0;" />
         </a>
-        <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="history">
+        <a class="tab-item tab-history" href="#" data-bind="click: this.app.tab_navigate" data-tab="history">
             <span class="icon icon-gear">
             </span>
             <span class="tab-label">Historial</span>
         </a>
-        <a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="store">
+         <a class="tab-item tab-about" href="#" data-bind="click: this.app.tab_navigate" data-tab="about">
+            <span class="icon icon-star"></span>
+            <span class="tab-label">Info</span>
+        </a>
+        <!--<a class="tab-item" href="#" data-bind="click: this.app.tab_navigate" data-tab="store">
             <span class="icon icon-star"></span>
             <span class="tab-label">Tienda</span>
-        </a>
+        </a>-->
     </nav>
     <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
     <div class="content">
         <!-- Home -->
         <div class="template" style=" display: none" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'">
             <div class="start_summary" style="background-image: url('img/domino_backsplash.jpg'); background-repeat: no-repeat; background-size: 100%; min-height: 150px; ">
-                <div class="col-xs-4" style=" text-align: center; margin-top: 25px; ">
-                    <h3 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em 0.1em #808080;">Juegos</h3>
-                    <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em 0.1em #979797;" data-bind="text:games().length"></h1>
+                <div class="col-xs-4" style=" text-align: center; margin-top: 25px;background-color: rgba(194, 194, 194, 0.60); ">
+                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;">Juegos</h3>
+                    <h1 style="color: rgb(128, 249, 87);text-shadow: 0.03em 0.03em 0.01em #000000;" data-bind="text:games().length"></h1>
                 </div>
-               <div class="col-xs-4" style=" text-align: center; margin-top: 25px; ">
-                    <h3 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em 0.1em #808080; ">Chivas</h3>
-                    <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em 0.1em #979797;">0</h1>
+               <div class="col-xs-4" style=" text-align: center; margin-top: 25px;background-color: rgba(194, 194, 194, 0.60);">
+                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;">Chivas</h3>
+                    <h1 style="color: rgb(128, 249, 87);text-shadow: 0.03em 0.03em 0.01em #000000;">0</h1>
                 </div>
-                <div class="col-xs-4" style=" text-align: center; margin-top: 25px; ">
-                    <h3 style="color: rgb(90, 200, 250); text-shadow: 0.1em 0.1em 0.1em #808080; ">Ganados</h3>
-                    <h1 style="color: rgb(76,217,100); text-shadow: 0.08em 0.08em 0.1em #979797;">0%</h1>
+                <div class="col-xs-4" style=" text-align: center; margin-top: 25px;background-color: rgba(194, 194, 194, 0.60); ">
+                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;">Ganados</h3>
+                    <h1 style="color: rgb(128, 249, 87);text-shadow: 0.03em 0.03em 0.01em #000000;">0%</h1>
                 </div>
             </div>
             <div class="table-view-divider" style="text-align:center">Juegos Recientes</div>
@@ -196,16 +201,16 @@
             </div>
             <form class="input-group" data-bind="submit:saveProfile" role="form" id="profileform">
                 <div class="input-row">
-		    <label>Nombre</label>
+		    <label>Nombre *</label>
                     <input type="text" id="name" data-bind="value:user.name" required />
                 </div>
                 <div class="input-row">
 		    <label>Email</label>
-                    <input type="email" id="email" data-bind="value:user.email" required />
+                    <input type="email" id="email" data-bind="value:user.email"  />
                 </div>
                 <div class="input-row">
 		    <label>Telefono</label>
-                    <input type="text" id="phone" data-bind="value:user.phone" required />
+                    <input type="text" id="phone" data-bind="value:user.phone"  />
                 </div>
                 <button type="submit" class="btn btn-lg btn-block btn-positive">Guardar</button>
             </form>
@@ -245,7 +250,7 @@
                 <p style="text-align:center">v1.0 <br /><b>BETA</b></p>
             </div>
             <div>
-                <p style="text-align:center">Developed by Luis Cintron. Send feedback to <a href="mailto:l.cintron@live.com">l.cintron@live.com</a></p>
+                <p style="text-align:center">Desarollado por Luis Cintron. <br/>Preguntas? Contacteme @ <a href="mailto:l.cintron@live.com">l.cintron@live.com</a></p>
             </div>
         </div>
 	<!-- Store -->

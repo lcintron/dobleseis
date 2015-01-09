@@ -188,7 +188,12 @@ function GameViewModel() {
     };
 
     self.newGame = function () {
-        app.tab_navigate('players');
+        if (self.isGameActive()) {
+            app.tab_navigate('activegame');
+        }
+        else {
+            app.tab_navigate('players');
+        }
     };
 
     self.viewGameSummary = function (game) {
@@ -345,14 +350,13 @@ var app = {
 			    title: 'Juego Nuevo',
 			    isVisible: true,
 			    action: function () {
-			        /*if (app.viewModel.isGameActive()
-							&& !confirm('Existe un juego en progreso. Desea empezar un juego nuevo?')) {
-			            return false;
-			        }*/
-				if (app.viewModel.isGameActive()) {
-			                
-					return true;
+			        if (app.viewModel.isGameActive()
+			        && !confirm('Existe un juego en progreso. Desea empezar un juego nuevo?')) {
+			        return false;
 			        }
+			        //if (app.viewModel.isGameActive()) {
+			        //    return true;
+			        //}
 			        app.viewModel.currentGame(new Game());
 			        return true;
 			    }
@@ -372,12 +376,12 @@ var app = {
 			    title: 'Juego Activo',
 			    isVisible: true,
 			    action: function () {
-			        if (app.viewModel.isGameActive()){
-				    app.tab_navigate('activegame');
+			        if (app.viewModel.isGameActive()) {
 			            return true;
-				}
-			        else
+			        }
+			        else {
 			            return false;
+			        }
 			    }
 			},
 			{
@@ -403,23 +407,23 @@ var app = {
 			        });
 			        return true;
 			    }
-			}, 
+			},
                         {
-			    tabId: 'about',
-			    title: 'About',
-			    isVisible: true,
-			    action: function () {
-			        return true;
-			    }
-			}, 
+                            tabId: 'about',
+                            title: 'Info',
+                            isVisible: true,
+                            action: function () {
+                                return true;
+                            }
+                        },
                         {
-			    tabId: 'store',
-			    title: 'Tienda',
-			    isVisible: true,
-			    action: function () {
-			        return true;
-			    }
-			}
+                            tabId: 'store',
+                            title: 'Tienda',
+                            isVisible: true,
+                            action: function () {
+                                return true;
+                            }
+                        }
 
     ],
     navStack: ko.observableArray(),
@@ -450,15 +454,17 @@ var app = {
         if (item != null && item.action()) {
             //update navigation stack
             /*if (sender != 'back' &&) {
-                app.navStack.push(app.currentTab());
-                if (app.navStack().length > 1) {
-                    $('#backbtn').show();
-                }
+            app.navStack.push(app.currentTab());
+            if (app.navStack().length > 1) {
+            $('#backbtn').show();
+            }
             }
             else if (app.navStack().length <= 1) {
-                $('#backbtn').hide();
+            $('#backbtn').hide();
             }*/
             app.currentTab(item);
+            $('.tab-item').removeClass('active');
+            $('.tab-' + item.tabId).addClass('active');
         }
         //$('.navbar-collapse').removeClass('in').addClass('collapse');
     },
@@ -483,7 +489,7 @@ var app = {
         app.log('initialize');
         app.bindEvents();
         var _host = window.location.host;
-	app.log(_host);
+        app.log(_host);
         app.isWebBased = window.cordova == null;
 
         if (app.isWebBased) {
@@ -547,7 +553,7 @@ var app = {
     onMenuKeyDown: function () {
         app.log('menu button pressed');
         //alert('Doble Seis v1.0. Developed by Luis Cintron');
-	app.tab_navigate('about');
+        app.tab_navigate('about');
     },
     log: function (message, url, linenumber) {
         setTimeout(function () {
