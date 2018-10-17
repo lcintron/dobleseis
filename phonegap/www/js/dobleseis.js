@@ -35,7 +35,8 @@ var dictionary = {
         'slaughters': 'Chivas',
         'playersnotidentified': 'Jugadores no identificados',
         'startnewgameprompt': 'Existe un juego en progreso. Desea empezar un juego nuevo?',
-        'welcome': '¡Bienvenido!'
+        'welcome': '¡Bienvenido!',
+        'name':'Nombre'
     },
     'English': {
         'home': 'Start',
@@ -65,7 +66,8 @@ var dictionary = {
         'slaughters': 'Slaughters',
         'playersnotidentified': 'Players not identified',
         'startnewgameprompt': 'Game in progress. Do you want to start a new game?',
-        'welcome': 'Welcome!'
+        'welcome': 'Welcome!',
+        'name':'Name'
     }
 };
 //Clases and logic 
@@ -585,7 +587,7 @@ var app = {
         app.tabs = [
             {
                 tabId: 'home',
-                title: app.getText('home'),
+                title: dictionary[app.selectedLanguage]['home'],
                 isVisible: true,
                 action: function () {
                     return app.viewModel.isInitialized();
@@ -593,7 +595,7 @@ var app = {
             },
             {
                 tabId: 'players',
-                title: app.getSelectedLanguage().newgame,
+                title: dictionary[app.selectedLanguage]['newgame'],
                 isVisible: true,
                 action: function () {
                     if (app.viewModel.isGameActive()
