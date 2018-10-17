@@ -1,4 +1,74 @@
-﻿//Clases and logic 
+﻿
+ko.bindingHandlers.placeholder = {
+    init: function (element, valueAccessor, allBindingsAccessor) {
+        var underlyingObservable = valueAccessor();
+        ko.applyBindingsToNode(element, { attr: { placeholder: underlyingObservable } } );
+    }
+};
+
+var dictionary = {
+    'Español': {
+        'home': 'Inicio',
+        'profile': 'Perfil',
+        'history': 'Historial',
+        'about': 'Info',
+        'recentgames': 'Juegos Recientes',
+        'games': 'Juegos',
+        'hands': 'Manos',
+        'won': 'Ganados',
+        'touchtostart': 'Toque el domino para comenzar un juego',
+        'change': 'Cambiar',
+        'email': 'Correo Electrónico',
+        'phone': 'Teléfono',
+        'save': 'Guardar',
+        'them': 'Ellos',
+        'us': 'Nosotros',
+        'player': 'Jugador',
+        'pointspergame': 'Puntos x Juego',
+        'begin': 'Iniciar',
+        'game': 'Juego',
+        'active': 'Activo',
+        'points': 'Puntos',
+        'newgame': 'Juego Nuevo',
+        'deletegame': 'Borrar Juego',
+        'gamesummary': 'Resúmen del Juego',
+        'slaughters': 'Chivas',
+        'playersnotidentified': 'Jugadores no identificados',
+        'startnewgameprompt': 'Existe un juego en progreso. Desea empezar un juego nuevo?',
+        'welcome': '¡Bienvenido!'
+    },
+    'English': {
+        'home': 'Start',
+        'profile': 'Profile',
+        'history': 'History',
+        'about': 'About',
+        'recentgames': 'Recent Games',
+        'games': 'Games',
+        'hands': 'Hands',
+        'won': 'Won',
+        'touchtostart': 'Touch the domino to start a new game',
+        'change': 'Change',
+        'email': 'Email',
+        'phone': 'Phone',
+        'save': 'Save',
+        'them': 'Them',
+        'us': 'Us',
+        'player': 'Player',
+        'pointspergame': 'Points per Game',
+        'begin': 'Start',
+        'game': 'Game',
+        'active': 'Active',
+        'points': 'Points',
+        'newgame': 'New Game',
+        'deletegame': 'Delete Game',
+        'gamesummary': 'Game Summary',
+        'slaughters': 'Slaughters',
+        'playersnotidentified': 'Players not identified',
+        'startnewgameprompt': 'Game in progress. Do you want to start a new game?',
+        'welcome': 'Welcome!'
+    }
+};
+//Clases and logic 
 function User() {
     var self = this;
     self.userId = -1;
@@ -11,8 +81,7 @@ function User() {
     self.loadFromJS = function (usr) {
         self.userId = usr.userId;
         self.name(usr.name);
-        self.email(usr.email);
-        self.phone(usr.phone);
+
         self.description(usr.description);
         self.pin(usr.pin);
         self.mobileSessionId = usr.mobileSessionId;
@@ -49,7 +118,7 @@ function Game() {
 
     self.isGameOver = ko.computed(function () {
         if (self.totalNosotros() >= self.gameLimit
-				|| self.totalEllos() >= self.gameLimit)
+            || self.totalEllos() >= self.gameLimit)
             return true;
         else {
             return false;
@@ -97,7 +166,7 @@ function Game() {
         }
 
         if (str == '') {
-            str += 'Jugadores no identificados.';
+            str += dictionary[app.selectedLanguage]['playersnotidentified'];
         }
         return str;
     });
@@ -131,10 +200,10 @@ function Hand() {
     self.setHand = function (winner, hand_score) {
         self.hand_score = hand_score;
         self.winner = winner;
-        if (winner == "Ellos") {
+        if (winner == dictionary[app.selectedLanguage]['them']) {
             self.ellos = new TeamScore(0, self.hand_score);
             self.nosotros = new TeamScore(0, 0);
-        } else if (winner == "Nosotros") {
+        } else if (winner == dictionary[app.selectedLanguage]['us']) {
             self.ellos = new TeamScore(0, 0);
             self.nosotros = new TeamScore(0, self.hand_score);
         }
@@ -159,15 +228,24 @@ function GameViewModel() {
     var self = this;
     self.type = 'GameViewModel';
     self.user = new User();
+    self.selectedLanguage = ko.observable(app.selectedLanguage);
+    self.getText = function(key){
+        return dictionary[self.selectedLanguage()][key];
+    };
     self.isInitialized = ko.observable(app.storage.get('isInitialized') == null ? false : true);
     self.currentGame = ko.observable(new Game());
     self.finishedGame = ko.observable(new Game().flattened());
     self.isGameActive = ko.observable(false);
+    self.updateAppLanguage = ko.computed(function(){
+            app.selectedLanguage = self.selectedLanguage();
+            app.storage.set('language', self.selectedLanguage());
+            return true;
+    });
     self.teams = [{
-        name: "Ellos",
+        name: dictionary[app.selectedLanguage]['them'],
         score: 0
     }, {
-        name: "Nosotros",
+        name: dictionary[app.selectedLanguage]['us'],
         score: 0
     }];
     self.games = ko.observableArray();
@@ -180,8 +258,8 @@ function GameViewModel() {
 
     self.startGame = function () {
         self.currentGame().gameLimit = $('input[name=gamepoints]:checked')
-				.val() == null ? 200 : parseInt($(
-				'input[name=gamepoints]:checked').val());
+            .val() == null ? 200 : parseInt($(
+                'input[name=gamepoints]:checked').val());
         self.isGameActive(true);
         app.tab_navigate('activegame');
         $('#img_menu_active').fadeIn('fast');
@@ -203,18 +281,18 @@ function GameViewModel() {
 
     self.choseProfilePicture = function () {
         navigator.camera.getPicture(self.onProfilePictureSuccess,
-				self.onProfilePictureFail, {
-				    quality: 50,
-				    destinationType: Camera.DestinationType.DATA_URL
-				});
+            self.onProfilePictureFail, {
+                quality: 50,
+                destinationType: Camera.DestinationType.DATA_URL
+            });
     };
 
     self.getScorePhoto = function () {
         navigator.camera.getPicture(self.onScorePictureSuccess,
-				self.onProfilePictureFail, {
-				    quality: 50,
-				    destinationType: Camera.DestinationType.FILE_URI
-				});
+            self.onProfilePictureFail, {
+                quality: 50,
+                destinationType: Camera.DestinationType.FILE_URI
+            });
     };
 
     self.onProfilePictureSuccess = function (imageData) {
@@ -250,8 +328,7 @@ function GameViewModel() {
             var hand = new Hand();
             hand.setHand(winner, score);
             if (self.currentGame().hands().length > 0) {
-                var last = self.currentGame().hands()[self.currentGame()
-						.hands().length - 1];
+                var last = self.currentGame().hands()[self.currentGame().hands().length - 1];
                 hand.ellos.old_score = last.ellos.total;
                 hand.nosotros.old_score = last.nosotros.total;
                 hand.reload();
@@ -274,7 +351,7 @@ function GameViewModel() {
                 }
             }
             $('input[name=team]:checked').removeAttr('checked').parent()
-					.removeClass('active');
+                .removeClass('active');
             $('#puntos').val('');
             $('#handfinished').modal('hide');
         }
@@ -289,7 +366,7 @@ function GameViewModel() {
         var count = self.currentGame().hands().length;
         if (count > 0)
             self.currentGame().hands
-					.remove(self.currentGame().hands()[count - 1]);
+                .remove(self.currentGame().hands()[count - 1]);
     };
 
     self.saveProfile = function (user) {
@@ -336,101 +413,21 @@ var app = {
     isWebBased: false,
     isOnline: false,
     viewModel: null,
-    tabs: [
-			{
-			    tabId: 'home',
-			    title: 'Inicio',
-			    isVisible: true,
-			    action: function () {
-			        return app.viewModel.isInitialized();
-			    }
-			},
-			{
-			    tabId: 'players',
-			    title: 'Juego Nuevo',
-			    isVisible: true,
-			    action: function () {
-			        if (app.viewModel.isGameActive()
-			        && !confirm('Existe un juego en progreso. Desea empezar un juego nuevo?')) {
-			        return false;
-			        }
-			        //if (app.viewModel.isGameActive()) {
-			        //    return true;
-			        //}
-			        app.viewModel.currentGame(new Game());
-			        return true;
-			    }
-			},
-			{
-			    tabId: 'settings',
-			    title: 'Perfil',
-			    isVisible: true,
-			    action: function () {
-			        $('.profilepicture').attr('src',
-							app.viewModel.user.profilepic);
-			        return true;
-			    }
-			},
-			{
-			    tabId: 'activegame',
-			    title: 'Juego Activo',
-			    isVisible: true,
-			    action: function () {
-			        if (app.viewModel.isGameActive()) {
-			            return true;
-			        }
-			        else {
-			            return false;
-			        }
-			    }
-			},
-			{
-			    tabId: 'gamesummary',
-			    title: 'Resumen del Juego',
-			    isVisible: false,
-			    action: function () {
-			        return true;
-			    }
-			},
-			{
-			    tabId: 'history',
-			    title: 'Historial',
-			    isVisible: true,
-			    action: function () {
-			        $.each(app.viewModel.games(), function (index, value) {
-			            if (value.timelapse == '') {
-			                value.timelapse = ko.observable(app
-									.getDays(value.completedOn));
-			            } else {
-			                value.timelapse(app.getDays(value.completedOn));
-			            }
-			        });
-			        return true;
-			    }
-			},
-                        {
-                            tabId: 'about',
-                            title: 'Info',
-                            isVisible: true,
-                            action: function () {
-                                return true;
-                            }
-                        },
-                        {
-                            tabId: 'store',
-                            title: 'Tienda',
-                            isVisible: true,
-                            action: function () {
-                                return true;
-                            }
-                        }
-
-    ],
+    appDictionary: dictionary,
+    selectedLanguage:window.localStorage.getItem("language")== null ? "Español":window.localStorage.getItem("language"),
+    getSelectedLanguage: function () {
+        return app.appDictionary[app.selectedLanguage];
+    },
+    getText: function (langKey) {
+        return app.getSelectedLanguage()[langKey];
+    },
+    languages: Object.keys(dictionary),
+    tabs: [],
     navStack: ko.observableArray(),
     isBackReady: ko.observable(false),
     currentTab: ko.observable({
         tabId: 'home',
-        title: 'Home',
+        title: dictionary["Español"]['home'],
         isVisible: true,
         action: function () {
             return app.viewModel.isInitialized();
@@ -440,7 +437,7 @@ var app = {
         app.log('navigating');
         if ((item == null || item.type == 'GameViewModel') && sender != null) {
             var tab = sender.target.nodeName == 'SPAN' ? sender.target.parentNode.dataset.tab
-					: sender.target.dataset.tab;
+                : sender.target.dataset.tab;
             item = tab;
         }
         if (typeof (item) == 'string') {
@@ -512,7 +509,6 @@ var app = {
     },
     onDeviceReady: function () {
         app.log('deviceready');
-        app.log(app.viewModel);
         app.addEventListeners();
         if (app.viewModel == null) {
             app.log('viewModel is null');
@@ -523,7 +519,8 @@ var app = {
             }
             ko.applyBindings(app.viewModel);
         }
-
+        app.log(app.viewModel);
+        app.loadTabs();
         if (!app.viewModel.isInitialized()) {
             app.tab_navigate('settings');
         } else {
@@ -572,7 +569,7 @@ var app = {
         var currentDate = new Date();
         if (currentDate.getFullYear() > dt.getFullYear()) {
             return (currentDate.getFullYear() - dt.getFullYear())
-					+ ' year ago.';
+                + ' year ago.';
         } else if (currentDate.getMonth() > dt.getMonth()) {
             return (currentDate.getMonth() - dt.getMonth()) + ' month ago.';
         } else if (currentDate.getDate() > dt.getDate()) {
@@ -581,12 +578,101 @@ var app = {
             return (currentDate.getHours() - dt.getHours()) + ' hours ago.';
         } else if (currentDate.getMinutes() >= dt.getMinutes()) {
             return (currentDate.getMinutes() - dt.getMinutes())
-					+ ' minutes ago.';
+                + ' minutes ago.';
         }
+    },
+    loadTabs: function () {
+        app.tabs = [
+            {
+                tabId: 'home',
+                title: app.getText('home'),
+                isVisible: true,
+                action: function () {
+                    return app.viewModel.isInitialized();
+                }
+            },
+            {
+                tabId: 'players',
+                title: app.getSelectedLanguage().newgame,
+                isVisible: true,
+                action: function () {
+                    if (app.viewModel.isGameActive()
+                        && !confirm(dictionary[app.selectedLanguage]['startnewgameprompt'])) {
+                        return false;
+                    }
+                    //if (app.viewModel.isGameActive()) {
+                    //    return true;
+                    //}
+                    app.viewModel.currentGame(new Game());
+                    return true;
+                }
+            },
+            {
+                tabId: 'settings',
+                title: dictionary[app.selectedLanguage]['profile'],
+                isVisible: true,
+                action: function () {
+                    $('.profilepicture').attr('src',
+                        app.viewModel.user.profilepic);
+                    return true;
+                }
+            },
+            {
+                tabId: 'activegame',
+                title: dictionary[app.selectedLanguage]['activegame'],
+                isVisible: true,
+                action: function () {
+                    if (app.viewModel.isGameActive()) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            },
+            {
+                tabId: 'gamesummary',
+                title: dictionary[app.selectedLanguage]['gamesummary'],
+                isVisible: false,
+                action: function () {
+                    return true;
+                }
+            },
+            {
+                tabId: 'history',
+                title: dictionary[app.selectedLanguage]['history'],
+                isVisible: true,
+                action: function () {
+                    $.each(app.viewModel.games(), function (index, value) {
+                        if (value.timelapse == '') {
+                            value.timelapse = ko.observable(app
+                                .getDays(value.completedOn));
+                        } else {
+                            value.timelapse(app.getDays(value.completedOn));
+                        }
+                    });
+                    return true;
+                }
+            },
+            {
+                tabId: 'about',
+                title: dictionary[app.selectedLanguage]['about'],
+                isVisible: true,
+                action: function () {
+                    return true;
+                }
+            },
+            {
+                tabId: 'store',
+                title: 'Tienda',
+                isVisible: true,
+                action: function () {
+                    return true;
+                }
+            }
+
+        ]
     }
 };
-
-$(function () {
-    app.initialize();
-    window.onerror = app.log;
-});
+app.initialize();
+window.onerror = app.log;

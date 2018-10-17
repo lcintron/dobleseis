@@ -1,3 +1,18 @@
 #profileform{
     width:100%;
 }
+
+.language-ddl{
+    height:50px;
+    font-size:1.3em;
+    font-weight: bold;
+    /*color:rgb(20,100,240);*/
+    background-color:white;
+    border-top:0;
+    border-left: 0;
+    border-right:0;
+    text-align:center;
+    text-align-last:center;
+}
+
+.language-ddl .lt {text-align:center}

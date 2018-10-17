@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>DobleSeis</title>
@@ -18,6 +19,7 @@
     <script src="js/ratchet.js"></script>
     <script type="text/javascript" src="phonegap.js"></script>
 </head>
+
 <body>
     <!-- Make sure all your bars are the first things in your <body> -->
     <header class="bar bar-nav">
@@ -33,23 +35,25 @@
         <a class="tab-item tab-home" href="#" data-bind="click: this.app.tab_navigate" data-tab="home">
             <span class=" icon icon-home">
             </span>
-            <span class="tab-label">Inicio</span>
+            <span class="tab-label" data-bind="text: this.app.getSelectedLanguage().home"></span>
         </a>
         <a class="tab-item tab-settings" href="#" data-bind="click: this.app.tab_navigate" data-tab="settings">
             <span class=" icon icon-person">
             </span>
-            <span class="tab-label">Perfil</span>
+            <span class="tab-label"><span data-bind="text: getText('profile')"></span></span>
         </a>
         <a class="tab-item tab-newGame" href="#" data-bind="click: newGame">
-            <img id="img_menu" src="img/logo_m.png" style="position: fixed; bottom: 0px;display: block; margin-left: auto; margin-right: auto;left:0;right:0;" />
-            <img id="img_menu_active" src="img/logo_m_active.png" style="position: fixed; bottom: 0px; display: none; margin-left: auto; margin-right: auto;left:0;right:0;" />
+            <img id="img_menu" src="img/logo_m.png" style="position: fixed; bottom: 0px;display: block; margin-left: auto; margin-right: auto;left:0;right:0;"
+            />
+            <img id="img_menu_active" src="img/logo_m_active.png" style="position: fixed; bottom: 0px; display: none; margin-left: auto; margin-right: auto;left:0;right:0;"
+            />
         </a>
         <a class="tab-item tab-history" href="#" data-bind="click: this.app.tab_navigate" data-tab="history">
             <span class="icon icon-gear">
             </span>
-            <span class="tab-label">Historial</span>
+            <span class="tab-label"><span data-bind="text: getText('history')"></span></span>
         </a>
-         <a class="tab-item tab-about" href="#" data-bind="click: this.app.tab_navigate" data-tab="about">
+        <a class="tab-item tab-about" href="#" data-bind="click: this.app.tab_navigate" data-tab="about">
             <span class="icon icon-star"></span>
             <span class="tab-label">Info</span>
         </a>
@@ -64,57 +68,60 @@
         <div class="template" style=" display: none" id="home" data-bind="visible:this.app.currentTab().tabId == 'home'">
             <div class="start_summary" style="background-image: url('img/domino_backsplash.jpg'); background-repeat: no-repeat; background-size: 100%; min-height: 150px; ">
                 <div class="col-xs-4" style=" text-align: center; margin-top: 25px;background-color: rgba(194, 194, 194, 0.60); ">
-                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;">Juegos</h3>
+                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;"><span data-bind="text: getText('games')"></span></h3>
                     <h1 style="color: rgb(128, 249, 87);text-shadow: 0.03em 0.03em 0.01em #000000;" data-bind="text:games().length"></h1>
                 </div>
-               <div class="col-xs-4" style=" text-align: center; margin-top: 25px;background-color: rgba(194, 194, 194, 0.60);">
-                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;">Chivas</h3>
+                <div class="col-xs-4" style=" text-align: center; margin-top: 25px;background-color: rgba(194, 194, 194, 0.60);">
+                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;"><span data-bind="text: getText('slaughters')"></span></h3>
                     <h1 style="color: rgb(128, 249, 87);text-shadow: 0.03em 0.03em 0.01em #000000;">0</h1>
                 </div>
                 <div class="col-xs-4" style=" text-align: center; margin-top: 25px;background-color: rgba(194, 194, 194, 0.60); ">
-                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;">Ganados</h3>
+                    <h3 style="color: rgb(255, 255, 255);text-shadow: 0.05em 0.05em 0.01em #080808;"><span data-bind="text: getText('won')"></span></h3>
                     <h1 style="color: rgb(128, 249, 87);text-shadow: 0.03em 0.03em 0.01em #000000;">0%</h1>
                 </div>
             </div>
-            <div class="table-view-divider" style="text-align:center">Juegos Recientes</div>
+            <div class="table-view-divider" style="text-align:center"><span data-bind="text: getText('recentgames')"></span></div>
             <ul class="table-view" data-bind="foreach:games().slice(0,3)">
                 <li class="table-view-cell media">
                     <a class="push-right" class="list-group-item" data-bind="click: $root.viewGameSummary">
                         <div class="media-body">
-                            Ellos(<span data-bind="text:totalEllos"></span>) - Nosotros(<span data-bind="text:totalNosotros"></span>)
+                            Ellos(
+                            <span data-bind="text:totalEllos"></span>) - <span data-bind="text: getText('us')"></span> (
+                            <span data-bind="text:totalNosotros"></span>)
                             <p class="list-group-item-text" data-bind="text:displayText"></p>
                             <p class="list-group-item-text" data-bind="text:timelapse()"></p>
                         </div>
                     </a>
                 </li>
             </ul>
-	    <div class='init-msg' data-bind="visible:games().length==0">
-		<p style="text-align:center;vertical-align:bottom">Toque el domino para comenzar un juego.</p>
-	    </div>
+            <div class='init-msg' data-bind="visible:games().length==0">
+                <p style="text-align:center;vertical-align:bottom"><span data-bind="text: getText('touchtostart')"></span></p>
+            </div>
         </div>
         <!-- Players -->
         <div class="template" style="padding: 5px; display: none" id="players" data-bind="visible:this.app.currentTab().tabId == 'players'">
             <div class="form-group">
-                <label>Ellos</label>
+                <label><span data-bind="text: getText('them')"></label>
                 <input type="text" class="" id="player1" placeholder="Jugador 1" style="margin-bottom: 10px;" data-bind="value: currentGame().player1">
                 <input type="text" class="" id="player2" placeholder="Jugador 2" data-bind="value:currentGame().player2">
             </div>
             <div class="form-group">
-                <label>Nosotros</label>
+                <label><span data-bind="text: getText('us')"></label>
                 <input type="text" class="" id="player3" placeholder="Jugador 3" style="margin-bottom: 10px;" data-bind="value: currentGame().player3">
                 <input type="text" class="" id="player4" placeholder="Jugador 4" data-bind="value: currentGame().player4">
             </div>
             <div class="form-group">
-                <label>Puntos x Juego</label>
+                <label><span data-bind="text: getText('pointspergame')"></label>
                 <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
                     <label class="btn btn-info btn-md active">
                         <input type="radio" name="gamepoints" id="gamePoints1" value="200" data-bind="checked: currentGame().gameLimit" checked="checked">200
-                    </label>
+                    </label>                   
+
                     <label class="btn btn-info btn-md">
                         <input type="radio" name="gamepoints" id="gamePoints2" value="500" data-bind="checked: currentGame().gameLimit">500
                     </label>
                 </div>
-                <a class="btn btn-positive btn-block" data-bind="click: startGame">Iniciar</a>
+                <a class="btn btn-positive btn-block" data-bind="click: startGame"><span data-bind="text: getText('begin')"></a>
             </div>
         </div>
         <!-- Active Game -->
@@ -123,15 +130,18 @@
                 <br />
                 <div class="btn-group btn-group-justified btn-group-lg" data-toggle="buttons" style="margin-bottom: 15px">
                     <label class="btn btn-primary btn-lg">
-                        <input type="radio" name="team" id="option1" value="Ellos">Ellos
+                        <input type="radio" name="team" id="option1" data-bind="value: app.viewModel.getText('them')"><span data-bind="text:app.viewModel.getText('them')"></span>
                     </label>
                     <label class="btn btn-primary btn-lg">
-                        <input type="radio" name="team" id="option2" value="Nosotros">Nosotros
+                        <input type="radio" name="team" id="option2" data-bind="value: app.viewModel.getText('us')"><span data-bind="text:getText('us')"></span>
                     </label>
                 </div>
                 <div class="input-group">
-                    <input type="number" style="width: 110%" required="required" class="form-control input-lg" id="puntos" placeholder="Puntos"><span class="input-group-btn">
-                        <button class="btn btn-positive" type="button" data-bind="click:addHand" style="padding-left: 50px; padding-right: 50px;height: 36px;margin-top:-1px"><span class="glyphicon glyphicon-plus"></span></button>
+                    <input type="number" style="width: 110%" required="required" class="form-control input-lg" id="puntos" placeholder="0">
+                    <span class="input-group-btn">
+                        <button class="btn btn-positive" type="button" data-bind="click:addHand" style="padding-left: 50px; padding-right: 50px;height: 36px;margin-top:-1px">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
                     </span>
                 </div>
             </form>
@@ -141,12 +151,14 @@
                     <tr>
                         <th colspan="2">
                             <span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">
-                                Ellos (<span data-bind="text:currentGame().totalEllos()"></span>)
+                                <span data-bind="text: getText('them')"></span> (
+                                <span data-bind="text:currentGame().totalEllos()"></span>)
                             </span>
                         </th>
                         <th colspan="2">
                             <span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">
-                                Nosotros (<span data-bind="text:currentGame().totalNosotros()"></span>)
+                                <span data-bind="text: getText('us')"></span> (
+                                <span data-bind="text:currentGame().totalNosotros()"></span>)
                             </span>
                         </th>
                     </tr>
@@ -189,7 +201,7 @@
         <!-- Settings -->
         <div class="template" style="padding: 5px; display: none" id="settings" data-bind="visible:this.app.currentTab().tabId == 'settings'">
             <div data-bind="visible:!isInitialized()">
-                <h3 class="text-center" style="margin-top: 10px;">Bienvenido!</h3>
+                <h3 class="text-center" style="margin-top: 10px;"><span data-bind="text: getText('welcome')"></span></h3>
                 <h5 data-bind="" class="text-center">
                     Por favor llene la siguiente forma antes de continuar.
                     <br />
@@ -197,23 +209,28 @@
             </div>
             <!-- <h3 style="margin-top: 10px;">Perfil</h3>-->
             <div style="margin:20px">
-                <img class="profilepicture center-block img-rounded" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px" data-bind="click:choseProfilePicture" />
+                <img class="profilepicture center-block img-rounded" style="height: auto; width: 150px; border: 1px solid silver; margin-bottom: 15px"
+                    data-bind="click:choseProfilePicture" />
                 <span style="display: block;margin-top: -35px; text-align: center; width: 150px; margin-left: auto; margin-right: auto; z-index: 1000; background-color: gray; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; color: white; opacity: 0.5;">cambiar</span>
             </div>
             <form class="input-group" data-bind="submit:saveProfile" role="form" id="profileform">
                 <div class="input-row">
-		    <label>Nombre *</label>
+                    <label><span data-bind="text: getText('name')"> *</label>
                     <input type="text" id="name" data-bind="value:user.name" required />
                 </div>
                 <div class="input-row">
-		    <label>Email</label>
-                    <input type="email" id="email" data-bind="value:user.email"  />
+                    <label><span data-bind="text: getText('email')"></label>
+                    <input type="email" id="email" data-bind="value:user.email" />
                 </div>
                 <div class="input-row">
-		    <label>Telefono</label>
-                    <input type="text" id="phone" data-bind="value:user.phone"  />
+                    <label><span data-bind="text: getText('phone')"></label>
+                    <input type="text" id="phone" data-bind="value:user.phone" />
                 </div>
-                <button type="submit" class="btn btn-lg btn-block btn-positive">Guardar</button>
+                <div class="input-row">
+                    <select id="language" class="language-ddl" data-bind="value:selectedLanguage, options:this.app.languages">
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-lg btn-block btn-positive"><span data-bind="text: getText('save')"></button>
             </form>
         </div>
         <!-- History -->
@@ -236,7 +253,9 @@
                 <li class="table-view-cell media">
                     <a class="push-right" class="list-group-item" data-bind="click: $root.viewGameSummary">
                         <div class="media-body">
-                            Ellos(<span data-bind="text:totalEllos"></span>) - Nosotros(<span data-bind="text:totalNosotros"></span>)
+                            <span data-bind="text: getText('them')"> (
+                            <span data-bind="text:totalEllos"></span>) - <span data-bind="text: getText('us')"> (
+                            <span data-bind="text:totalNosotros"></span>)
                             <p class="list-group-item-text" data-bind="text:displayText"></p>
                             <p class="list-group-item-text" data-bind="text:timelapse()"></p>
                         </div>
@@ -248,13 +267,19 @@
         <div class="template" id="about" data-bind="visible:this.app.currentTab().tabId == 'about'" style="display: none">
             <div style="margin-top:100px;margin-bottom:100px">
                 <img src="img/ds.png" class="center-block img-responsive" />
-                <p style="text-align:center">v1.0 <br /><b>BETA</b></p>
+                <p style="text-align:center">v1.0
+                    <br />
+                    <b>BETA</b>
+                </p>
             </div>
             <div>
-                <p style="text-align:center">Desarollado por Luis Cintron. <br/>Preguntas? Contacteme @ <a href="mailto:l.cintron@live.com">l.cintron@live.com</a></p>
+                <p style="text-align:center">Desarollado por Luis Cintron.
+                    <br/>Preguntas? Contacteme @
+                    <a href="mailto:l.cintron@live.com">l.cintron@live.com</a>
+                </p>
             </div>
         </div>
-	<!-- Store -->
+        <!-- Store -->
         <div class="template" id="store" data-bind="visible:this.app.currentTab().tabId == 'store'" style="display: none">
             <div style="margin-top:100px;margin-bottom:100px">
                 <img src="img/ds.png" class="center-block img-responsive" />
@@ -262,18 +287,21 @@
             </div>
         </div>
         <!-- Game Summary -->
-        <div class="template" id="gamesummary" data-bind="visible:this.app.currentTab().tabId == 'gamesummary', with: finishedGame()" style="padding:5px;display: none">
+        <div class="template" id="gamesummary" data-bind="visible:this.app.currentTab().tabId == 'gamesummary', with: finishedGame()"
+            style="padding:5px;display: none">
             <table class="table">
                 <thead>
                     <tr>
                         <th colspan="2">
                             <span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">
-                                Ellos (<span data-bind="text: totalEllos"></span>)
+                                <span data-bind="text: app.viewModel.getText('them')"> (
+                                <span data-bind="text: totalEllos"></span>)
                             </span>
                         </th>
                         <th colspan="2">
                             <span style="text-align: center; display: block; font-size: 1.2em; font-weight: 200;">
-                                Nosotros(<span data-bind="text: totalNosotros"></span>)
+                                <span data-bind="text: app.viewModel.getText('us')"> (
+                                <span data-bind="text: totalNosotros"></span>)
                             </span>
                         </th>
                     </tr>
@@ -295,8 +323,10 @@
                     </tr>
                 </tbody>
             </table>
-            <button class="btn btn-primary btn-block" data-bind="click:this.app.viewModel.newGame"><span class="glyphicon glyphicon-star"></span> Juego Nuevo</button>
-            <button class="btn btn-negative btn-block" data-bind="click:this.app.viewModel.deleteGame"><span class="glyphicon glyphicon-remove"></span> Borrar Juego</button>
+            <button class="btn btn-primary btn-block" data-bind="click:this.app.viewModel.newGame">
+                <span class="glyphicon glyphicon-star"></span> <span data-bind="text: app.viewModel.getText('newgame')"></span></button>
+            <button class="btn btn-negative btn-block" data-bind="click:this.app.viewModel.deleteGame">
+                <span class="glyphicon glyphicon-remove"></span><span data-bind="text: app.viewModel.getText('deletegame')"></button>
         </div>
     </div>
     </div>
@@ -307,4 +337,5 @@
     <script type="text/javascript" src="js/knockout-3.0.0.js"></script>
     <script type="text/javascript" src="js/dobleseis.js"></script>
 </body>
+
 </html>
